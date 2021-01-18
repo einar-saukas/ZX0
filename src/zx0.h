@@ -23,9 +23,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MAX_OFFSET_STANDARD    0x7f80
-#define MAX_OFFSET_EXTENDED    0xff00
-
 #define INITIAL_OFFSET 1
 
 #define FALSE 0
@@ -45,6 +42,6 @@ BLOCK *allocate(int bits, int index, int offset, int length, BLOCK *chain);
 
 void assign(BLOCK **ptr, BLOCK *chain);
 
-BLOCK *optimize(unsigned char *input_data, int input_size, int skip, int factor, int extended_mode);
+BLOCK *optimize(unsigned char *input_data, int input_size, int skip, int offset_limit);
 
-unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_size, int skip, int extended_mode, int backwards_mode, int *output_size, int *delta);
+unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_size, int skip, int backwards_mode, int *output_size, int *delta);

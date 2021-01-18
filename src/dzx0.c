@@ -105,7 +105,7 @@ void write_bytes(int offset, int length) {
     }
 }
 
-void decompress(int extended_mode) {
+void decompress() {
     int length;
     int i;
 
@@ -151,12 +151,8 @@ COPY_FROM_NEW_OFFSET:
         }
         return;
     }
-    if (extended_mode) {
-        last_offset = ((last_offset-1)<<8)+256-read_byte();
-    } else {
-        last_offset = ((last_offset-1)<<7)+128-(read_byte()>>1);
-        backtrack = TRUE;
-    }
+    last_offset = ((last_offset-1)<<7)+128-(read_byte()>>1);
+    backtrack = TRUE;
     length = read_elias_gamma(FALSE)+1;
     write_bytes(last_offset, length);
     if (read_bit()) {
@@ -166,23 +162,16 @@ COPY_FROM_NEW_OFFSET:
     }
 }
 
-int match_extension(char *filename, int extended_mode) {
-    int i = strlen(filename);
-    return i > 4 && !strcmp(filename+i-4, extended_mode ? ".zxx" : ".zx0");
-}
-
 int main(int argc, char *argv[]) {
     int forced_mode = FALSE;
-    int extended_mode = FALSE;
     int i;
 
     printf("DZX0: Data decompressor by Einar Saukas\n");
+    
     /* process hidden optional parameters */
     for (i = 1; i < argc && *argv[i] == '-'; i++) {
         if (!strcmp(argv[i], "-f")) {
             forced_mode = TRUE;
-        } else if (!strcmp(argv[i], "-x")) {
-            extended_mode = TRUE;
         } else {
             fprintf(stderr, "Error: Invalid parameter %s\n", argv[i]);
             exit(1);
@@ -193,7 +182,7 @@ int main(int argc, char *argv[]) {
     if (argc == i+1) {
         input_name = argv[i];
         input_size = strlen(input_name);
-        if (match_extension(input_name, 0) || match_extension(input_name, 1)) {
+        if (input_size > 4 && !strcmp(input_name+input_size-4, ".zx0")) {
             input_size = strlen(input_name);
             output_name = (char *)malloc(input_size);
             strcpy(output_name, input_name);
@@ -206,8 +195,7 @@ int main(int argc, char *argv[]) {
         input_name = argv[i];
         output_name = argv[i+1];
     } else {
-        fprintf(stderr, "Usage: %s [-x] [-f] input.zx0 [output]\n"
-                        "  -x      Extended format (zxx)\n"
+        fprintf(stderr, "Usage: %s [-f] input.zx0 [output]\n"
                         "  -f      Force overwrite of output file\n", argv[0]);
         exit(1);
     }
@@ -232,11 +220,8 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    if (match_extension(input_name, !extended_mode))
-        printf("Warning: Option -x%s used to decompress file with extension .zx%c\n", extended_mode ? "" : " not", extended_mode ? '0' : 'x');
-
     /* generate output file */
-    decompress(extended_mode);
+    decompress();
 
     /* close input file */
     fclose(ifp);

@@ -29,6 +29,9 @@
 
 #include "zx0.h"
 
+#define MAX_OFFSET_ZX0    32640
+#define MAX_OFFSET_ZX7     2176
+
 void reverse(unsigned char *first, unsigned char *last) {
     unsigned char c;
 
@@ -39,16 +42,10 @@ void reverse(unsigned char *first, unsigned char *last) {
     }
 }
 
-int match_extension(char *filename, int extended_mode) {
-    int i = strlen(filename);
-    return i > 4 && !strcmp(filename+i-4, extended_mode ? ".zxx" : ".zx0");
-}
-
 int main(int argc, char *argv[]) {
     int skip = 0;
-    int shrink_factor = 0;
     int forced_mode = FALSE;
-    int extended_mode = FALSE;
+    int quick_mode = FALSE;
     int backwards_mode = FALSE;
     char *output_name;
     unsigned char *input_data;
@@ -68,20 +65,13 @@ int main(int argc, char *argv[]) {
     for (i = 1; i < argc && (*argv[i] == '-' || *argv[i] == '+'); i++) {
         if (!strcmp(argv[i], "-f")) {
             forced_mode = TRUE;
-        } else if (!strcmp(argv[i], "-x")) {
-            extended_mode = TRUE;
+        } else if (!strcmp(argv[i], "-q")) {
+            quick_mode = TRUE;
         } else if (!strcmp(argv[i], "-b")) {
             backwards_mode = TRUE;
-        } else {
-            delta = atoi(argv[i]);
-            if (delta > 0) {
-               skip = delta;
-            } else if (delta < 0 && delta >= -15) {
-               shrink_factor = -delta;
-            } else {
-                fprintf(stderr, "Error: Invalid parameter %s\n", argv[i]);
-                exit(1);
-            }
+        } else if ((skip = atoi(argv[i])) <= 0) {
+            fprintf(stderr, "Error: Invalid parameter %s\n", argv[i]);
+            exit(1);
         }
     }
 
@@ -89,15 +79,14 @@ int main(int argc, char *argv[]) {
     if (argc == i+1) {
         output_name = (char *)malloc(strlen(argv[i])+5);
         strcpy(output_name, argv[i]);
-        strcat(output_name, extended_mode ? ".zxx" : ".zx0");
+        strcat(output_name, ".zx0");
     } else if (argc == i+2) {
         output_name = argv[i+1];
     } else {
-        fprintf(stderr, "Usage: %s [-x] [-f] [-b] [-<N>] input [output.zx0]\n"
-                        "  -x      Extended format (zxx)\n"
+        fprintf(stderr, "Usage: %s [-f] [-b] [-q] input [output.zx0]\n"
                         "  -f      Force overwrite of output file\n"
                         "  -b      Compress backwards\n"
-                        "  -<N>    Quick non-optimal compression\n", argv[0]);
+                        "  -q      Quick non-optimal compression\n", argv[0]);
         exit(1);
     }
 
@@ -157,16 +146,12 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    /* warning */
-    if (match_extension(output_name, !extended_mode))
-        printf("Warning: Option -x%s used to compress file with extension .zx%c\n", extended_mode ? "" : " not", extended_mode ? '0' : 'x');
-
     /* conditionally reverse input file */
     if (backwards_mode)
         reverse(input_data, input_data+input_size-1);
 
     /* generate output file */
-    output_data = compress(optimize(input_data, input_size, skip, shrink_factor, extended_mode), input_data, input_size, skip, extended_mode, backwards_mode, &output_size, &delta);
+    output_data = compress(optimize(input_data, input_size, skip, quick_mode ? MAX_OFFSET_ZX7 : MAX_OFFSET_ZX0), input_data, input_size, skip, backwards_mode, &output_size, &delta);
 
     /* conditionally reverse output file */
     if (backwards_mode)

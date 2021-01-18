@@ -30,13 +30,8 @@
 
 #define minimum(a,b) (a < b ? a : b)
 
-int offset_limit(int index, int shrink_factor, int extended_mode) {
-    int i = (extended_mode ? MAX_OFFSET_EXTENDED : MAX_OFFSET_STANDARD) >> shrink_factor;
-    if (i > index)
-        i = index;
-    if (i < INITIAL_OFFSET)
-        i = INITIAL_OFFSET;
-    return i;
+int offset_ceiling(int index, int offset_limit) {
+    return index > offset_limit ? offset_limit : index < INITIAL_OFFSET ? INITIAL_OFFSET : index;
 }
 
 int elias_gamma_bits(int value) {
@@ -48,7 +43,7 @@ int elias_gamma_bits(int value) {
     return bits;
 }
 
-BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int shrink_factor, int extended_mode) {
+BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_limit) {
     BLOCK **last_literal;
     BLOCK **last_match;
     BLOCK **optimal;
@@ -60,7 +55,7 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int shrink_
     int offset;
     int length;
     int bits2;
-    int max_offset = offset_limit(input_size-1, shrink_factor, extended_mode);
+    int max_offset = offset_ceiling(input_size-1, offset_limit);
 
     /* allocate all main data structures at once */
     last_literal = (BLOCK **)calloc(max_offset+1, sizeof(BLOCK *));
@@ -80,7 +75,7 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int shrink_
     /* process remaining bytes */
     for (index = skip; index < input_size; index++) {
         best_length_size = 2;
-        max_offset = offset_limit(index, shrink_factor, extended_mode);
+        max_offset = offset_ceiling(index, offset_limit);
         for (offset = 1; offset <= max_offset; offset++) {
             if (index >= offset && input_data[index] == input_data[index-offset]) {
                 /* copy from last offset */
@@ -107,7 +102,7 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int shrink_
                         } while(best_length_size < match_length[offset]);
                     }
                     length = best_length[match_length[offset]];
-                    bits = optimal[index-length]->bits + 1 + (extended_mode ? (8+elias_gamma_bits((offset-1)/256+1)) : (7+elias_gamma_bits((offset-1)/128+1))) + elias_gamma_bits(length-1);
+                    bits = optimal[index-length]->bits + 8 + elias_gamma_bits((offset-1)/128+1) + elias_gamma_bits(length-1);
                     if (!last_match[offset] || last_match[offset]->index != index || last_match[offset]->bits > bits) {
                         assign(&last_match[offset], allocate(bits, index, offset, length, optimal[index-length]));
                         if (!optimal[index] || optimal[index]->bits > bits)
