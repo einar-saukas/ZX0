@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Turbo" version (91 bytes, 25% faster)
+; "Turbo" version (96 bytes, 25% faster)
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -48,7 +48,10 @@ dzx0t_new_offset:
         jp      dzx0t_copy
 dzx0t_elias:
         add     a, a                    ; check next bit
-        call    z, dzx0t_load_bits      ; no more bits left?
+        jp      nz, dzx0t_elias_backtrack ; no more bits left?
+        ld      a, (hl)                 ; load another group of 8 bits
+        inc     hl
+        rla
 dzx0t_elias_backtrack:
         ld      bc, 1
         ret     c
@@ -57,19 +60,22 @@ dzx0t_elias_size:
         rr      b
         rr      c
         add     a, a                    ; check next bit
-        call    z, dzx0t_load_bits      ; no more bits left?
+        jp      nz, dzx0t_elias_size2   ; no more bits left?
+        ld      a, (hl)                 ; load another group of 8 bits
+        inc     hl
+        rla
+dzx0t_elias_size2:
         jr      nc, dzx0t_elias_size
         inc     c
 dzx0t_elias_value:
         add     a, a                    ; check next bit
-        call    z, dzx0t_load_bits      ; no more bits left?
-        rl      c
-        rl      b
-        jr      nc, dzx0t_elias_value
-        ret
-dzx0t_load_bits:
+        jp      nz, dzx0t_elias_value2  ; no more bits left?
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
+dzx0t_elias_value2:
+        rl      c
+        rl      b
+        jr      nc, dzx0t_elias_value
         ret
 ; -----------------------------------------------------------------------------

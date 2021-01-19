@@ -1,4 +1,4 @@
-# ZX0          
+# ZX0
 
 **ZX0** is an optimal data compressor for a custom LZ77/LZSS based compression
 format, that provides a tradeoff between high compression ratio, and extremely
@@ -20,8 +20,8 @@ Afterwards you can choose a decompressor routine in assembly Z80, according to
 your requirements for speed and size:
 
 * "Standard" routine: 82 bytes only
-* "Turbo" routine: 91 bytes, about 25% faster
-* "Mega" routine: 232 bytes, about 40% faster
+* "Turbo" routine: 96 bytes, about 25% faster
+* "Mega" routine: 249 bytes, about 40% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
 somewhere in memory. To decompress data, just call the routine specifying the

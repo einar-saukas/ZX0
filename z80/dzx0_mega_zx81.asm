@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Mega" version (232 bytes, 40% faster) - ZX81 VARIANT: USE PUSH/POP INSTEAD OF AF'
+; "Mega" version (249 bytes, 40% faster) - ZX81 VARIANT: USE PUSH/POP INSTEAD OF AF'
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -48,7 +48,7 @@ dzx0m1_new_offset:
         jp      dzx0m1_copy
 dzx0m1_elias:
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_backtrack
+        jp      nz, dzx0m1_elias_backtrack
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -58,7 +58,7 @@ dzx0m1_elias_backtrack:
         add     a, a
         jp      c, dzx0m1_elias_value1
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_size2
+        jp      nz, dzx0m1_elias_size2
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -67,16 +67,16 @@ dzx0m1_elias_size2:
         add     a, a
         jp      c, dzx0m1_elias_value3
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_size4
+        jp      nz, dzx0m1_elias_size4
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
 dzx0m1_elias_size4:
-        jr      c, dzx0m1_elias_value4
+        jp      c, dzx0m1_elias_value4
         add     a, a
         jr      c, dzx0m1_elias_value5
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_size6
+        jp      nz, dzx0m1_elias_size6
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -85,7 +85,7 @@ dzx0m1_elias_size6:
         add     a, a
         jr      c, dzx0m1_elias_value7
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_size8
+        jp      nz, dzx0m1_elias_size8
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -94,7 +94,7 @@ dzx0m1_elias_size8:
         add     a, a
         jr      c, dzx0m1_elias_value9
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_size10
+        jp      nz, dzx0m1_elias_size10
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -103,7 +103,7 @@ dzx0m1_elias_size10:
         add     a, a
         jr      c, dzx0m1_elias_value11
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_size12
+        jp      nz, dzx0m1_elias_size12
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -112,7 +112,7 @@ dzx0m1_elias_size12:
         add     a, a
         jr      c, dzx0m1_elias_value13
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_size14
+        jp      nz, dzx0m1_elias_size14
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -121,7 +121,7 @@ dzx0m1_elias_size14:
         add     a, a                    ; check next bit
         ld      b, c
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value14
+        jp      nz, dzx0m1_elias_value14
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -131,7 +131,7 @@ dzx0m1_elias_value14:
 dzx0m1_elias_value13:
         rl      b
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value12
+        jp      nz, dzx0m1_elias_value12
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -141,7 +141,7 @@ dzx0m1_elias_value12:
 dzx0m1_elias_value11:
         rl      b
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value10
+        jp      nz, dzx0m1_elias_value10
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -151,7 +151,7 @@ dzx0m1_elias_value10:
 dzx0m1_elias_value9:
         rl      b
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value8
+        jp      nz, dzx0m1_elias_value8
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -161,7 +161,7 @@ dzx0m1_elias_value8:
         rl      c
 dzx0m1_elias_value7:
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value7b
+        jp      nz, dzx0m1_elias_value7b
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -172,7 +172,7 @@ dzx0m1_elias_value6:
         rl      c
 dzx0m1_elias_value5:
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value5b
+        jp      nz, dzx0m1_elias_value5b
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -183,7 +183,7 @@ dzx0m1_elias_value4:
         rl      c
 dzx0m1_elias_value3:
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value3b
+        jp      nz, dzx0m1_elias_value3b
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -194,7 +194,7 @@ dzx0m1_elias_value2:
         rl      c
 dzx0m1_elias_value1:
         add     a, a                    ; check next bit
-        jr      nz, dzx0m1_elias_value1b
+        jp      nz, dzx0m1_elias_value1b
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
