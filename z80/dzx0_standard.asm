@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Standard" version (82 bytes only)
+; "Standard" version (81 bytes only)
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -10,6 +10,7 @@
 dzx0_standard:
         ld      bc, $ffff               ; preserve default offset 1
         push    bc
+        inc     bc
         ld      a, $80
 dzx0s_literals:
         call    dzx0s_elias             ; obtain length
@@ -27,8 +28,9 @@ dzx0s_copy:
         add     a, a                    ; copy from literals or new offset?
         jr      nc, dzx0s_literals
 dzx0s_new_offset:
-        pop     bc                      ; discard last offset
-        call    dzx0s_elias_carry       ; obtain offset MSB
+        inc     sp                      ; discard last offset
+        inc     sp
+        call    dzx0s_elias_size        ; obtain offset MSB
         ret     nz                      ; check end marker
         ex      af, af'                 ; adjust for negative offset
         xor     a
@@ -46,8 +48,6 @@ dzx0s_new_offset:
         jr      dzx0s_copy
 dzx0s_elias:
         scf                             ; Elias gamma coding
-dzx0s_elias_carry:
-        ld      bc, 0
 dzx0s_elias_size:
         rr      b
         rr      c

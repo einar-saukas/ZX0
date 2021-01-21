@@ -12,11 +12,11 @@ dzx0_mega_zx81:
         push    bc
         ld      a, $80
 dzx0m1_literals:
-        call    dzx0m1_elias             ; obtain length
+        call    dzx0m1_elias            ; obtain length
         ldir                            ; copy literals
         add     a, a                    ; copy from last offset or new offset?
         jr      c, dzx0m1_new_offset
-        call    dzx0m1_elias             ; obtain length
+        call    dzx0m1_elias            ; obtain length
 dzx0m1_copy:
         ex      (sp), hl                ; preserve source, restore offset
         push    hl                      ; preserve offset
@@ -28,7 +28,7 @@ dzx0m1_copy:
         jr      nc, dzx0m1_literals
 dzx0m1_new_offset:
         pop     bc                      ; discard last offset
-        call    dzx0m1_elias             ; obtain offset MSB
+        call    dzx0m1_elias            ; obtain offset MSB
         inc     b
         dec     b
         ret     nz                      ; check end marker
@@ -43,7 +43,7 @@ dzx0m1_new_offset:
         rr      b                       ; last offset bit becomes first length bit
         rr      c
         push    bc                      ; preserve new offset
-        call    dzx0m1_elias_backtrack   ; obtain length
+        call    dzx0m1_elias_backtrack  ; obtain length
         inc     bc
         jp      dzx0m1_copy
 dzx0m1_elias:

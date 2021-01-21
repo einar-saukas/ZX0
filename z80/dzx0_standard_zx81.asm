@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Standard" version (82 bytes only) - ZX81 VARIANT: USE PUSH/POP INSTEAD OF AF'
+; "Standard" version (81 bytes only) - ZX81 VARIANT: USE PUSH/POP INSTEAD OF AF'
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -10,13 +10,14 @@
 dzx0_standard_zx81:
         ld      bc, $ffff               ; preserve default offset 1
         push    bc
+        inc     bc
         ld      a, $80
 dzx0s1_literals:
-        call    dzx0s1_elias             ; obtain length
+        call    dzx0s1_elias            ; obtain length
         ldir                            ; copy literals
         add     a, a                    ; copy from last offset or new offset?
         jr      c, dzx0s1_new_offset
-        call    dzx0s1_elias             ; obtain length
+        call    dzx0s1_elias            ; obtain length
 dzx0s1_copy:
         ex      (sp), hl                ; preserve source, restore offset
         push    hl                      ; preserve offset
@@ -27,8 +28,9 @@ dzx0s1_copy:
         add     a, a                    ; copy from literals or new offset?
         jr      nc, dzx0s1_literals
 dzx0s1_new_offset:
-        pop     bc                      ; discard last offset
-        call    dzx0s1_elias_carry       ; obtain offset MSB
+        inc     sp                      ; discard last offset
+        inc     sp
+        call    dzx0s1_elias_size       ; obtain offset MSB
         ret     nz                      ; check end marker
         push    af                      ; adjust for negative offset
         xor     a
@@ -46,8 +48,6 @@ dzx0s1_new_offset:
         jr      dzx0s1_copy
 dzx0s1_elias:
         scf                             ; Elias gamma coding
-dzx0s1_elias_carry:
-        ld      bc, 0
 dzx0s1_elias_size:
         rr      b
         rr      c
