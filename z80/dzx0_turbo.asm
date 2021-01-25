@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas & introspec
-; "Turbo" version (130 bytes, 20% faster)
+; "Turbo" version (128 bytes, 20% faster)
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -70,9 +70,8 @@ dzx0t_elias:
         add     a, a                    ; interlaced Elias gamma coding
         rl      c
         add     a, a
-        jr      z, dzx0t_elias_reload
         jr      nc, dzx0t_elias
-        ret
+        ret     nz
 dzx0t_elias_reload:
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl

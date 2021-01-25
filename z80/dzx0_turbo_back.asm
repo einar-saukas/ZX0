@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas & introspec
-; "Turbo" version (129 bytes, 20% faster) - BACKWARDS VARIANT
+; "Turbo" version (127 bytes, 20% faster) - BACKWARDS VARIANT
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: last source address (compressed data)
@@ -69,9 +69,8 @@ dzx0tb_elias:
         add     a, a                    ; interlaced Elias gamma coding
         rl      c
         add     a, a
-        jr      z, dzx0tb_elias_reload
         jr      nc, dzx0tb_elias
-        ret
+        ret     nz
 dzx0tb_elias_reload:
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
