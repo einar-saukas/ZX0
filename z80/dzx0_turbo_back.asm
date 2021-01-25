@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
-; ZX0 decoder by Einar Saukas
-; "Turbo" version (91 bytes, 25% faster) - BACKWARDS VARIANT
+; ZX0 decoder by Einar Saukas & introspec
+; "Turbo" version (129 bytes, 20% faster) - BACKWARDS VARIANT
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: last source address (compressed data)
@@ -9,29 +9,21 @@
 
 dzx0_turbo_back:
         ld      bc, 1                   ; preserve default offset 1
-        push    bc
+        ld      (dzx0tb_last_offset+1), bc
+        dec     bc
         ld      a, $80
-dzx0tb_literals:
-        call    dzx0tb_elias            ; obtain length
-        lddr                            ; copy literals
-        add     a, a                    ; copy from last offset or new offset?
-        jr      c, dzx0tb_new_offset
-        call    dzx0tb_elias            ; obtain length
-dzx0tb_copy:
-        ex      (sp), hl                ; preserve source, restore offset
-        push    hl                      ; preserve offset
-        add     hl, de                  ; calculate destination - offset
-        lddr                            ; copy from offset
-        pop     hl                      ; restore offset
-        ex      (sp), hl                ; preserve offset, restore source
-        add     a, a                    ; copy from literals or new offset?
-        jr      nc, dzx0tb_literals
+        jr      dzx0tb_literals
 dzx0tb_new_offset:
-        pop     bc                      ; discard last offset
-        call    dzx0tb_elias            ; obtain offset MSB
-        inc     b
+        inc     c                       ; obtain offset MSB
+        add     a, a
+        jp      nz, dzx0tb_new_offset_skip
+        ld      a, (hl)                 ; load another group of 8 bits
+        dec     hl
+        rla
+dzx0tb_new_offset_skip:
+        call    nc, dzx0tb_elias
         dec     b
-        ret     nz                      ; check end marker
+        ret     z                       ; check end marker
         dec     c                       ; adjust for positive offset
         ld      b, c
         ld      c, (hl)                 ; obtain offset LSB
@@ -39,40 +31,70 @@ dzx0tb_new_offset:
         srl     b                       ; last offset bit becomes first length bit
         rr      c
         inc     bc
-        push    bc                      ; preserve new offset
-        call    dzx0tb_elias_backtrack  ; obtain length
+        ld      (dzx0tb_last_offset+1), bc ; preserve new offset
+        ld      bc, 1                   ; obtain length
+        call    nc, dzx0tb_elias
         inc     bc
+dzx0tb_copy:
+        push    hl                      ; preserve source
+dzx0tb_last_offset:
+        ld      hl, 0                   ; restore offset
+        add     hl, de                  ; calculate destination - offset
+        lddr                            ; copy from offset
+        pop     hl                      ; restore source
+        add     a, a                    ; copy from literals or new offset?
+        jr      c, dzx0tb_new_offset
+dzx0tb_literals:
+        inc     c                       ; obtain length
+        add     a, a
+        jp      nz, dzx0tb_literals_skip
+        ld      a, (hl)                 ; load another group of 8 bits
+        dec     hl
+        rla
+dzx0tb_literals_skip:
+        call    nc, dzx0tb_elias
+        lddr                            ; copy literals
+        add     a, a                    ; copy from last offset or new offset?
+        jr      c, dzx0tb_new_offset
+        inc     c
+        add     a, a                    ; obtain length
+        jp      nz, dzx0tb_last_offset_skip
+        ld      a, (hl)                 ; load another group of 8 bits
+        dec     hl
+        rla
+dzx0tb_last_offset_skip:
+        call    nc, dzx0tb_elias
         jp      dzx0tb_copy
 dzx0tb_elias:
-        add     a, a                    ; check next bit
-        jp      nz, dzx0tb_elias_backtrack ; no more bits left?
+        add     a, a                    ; interlaced Elias gamma coding
+        rl      c
+        add     a, a
+        jr      z, dzx0tb_elias_reload
+        jr      nc, dzx0tb_elias
+        ret
+dzx0tb_elias_reload:
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
         rla
-dzx0tb_elias_backtrack:
-        ld      bc, 1
         ret     c
-        scf
-dzx0tb_elias_size:
-        rr      b
-        rr      c
-        add     a, a                    ; check next bit
-        jp      nz, dzx0tb_elias_size2  ; no more bits left?
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        rla
-dzx0tb_elias_size2:
-        jr      nc, dzx0tb_elias_size
-        inc     c
-dzx0tb_elias_value:
-        add     a, a                    ; check next bit
-        jp      nz, dzx0tb_elias_value2 ; no more bits left?
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        rla
-dzx0tb_elias_value2:
+        add     a, a
         rl      c
         rl      b
-        jr      nc, dzx0tb_elias_value
-        ret
+        add     a, a
+        ret     c
+        add     a, a
+        rl      c
+        rl      b
+        add     a, a
+        ret     c
+        add     a, a
+        rl      c
+        rl      b
+        add     a, a
+        ret     c
+        add     a, a
+        rl      c
+        rl      b
+        add     a, a
+        jp      dzx0tb_elias_reload
 ; -----------------------------------------------------------------------------

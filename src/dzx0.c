@@ -57,18 +57,10 @@ int read_bit() {
     return bit_value & bit_mask ? 1 : 0;
 }
 
-int read_elias_gamma(int check) {
-    int value;
-    int i = 0;
+int read_interlaced_elias_gamma() {
+    int value = 1;
 
     while (!read_bit()) {
-        i++;
-    }
-    if (check && i > 7) {
-        return 0;
-    }
-    value = 1;
-    while (i--) {
         value = value << 1 | read_bit();
     }
     return value;
@@ -126,7 +118,7 @@ void decompress() {
     last_offset = INITIAL_OFFSET;
 
 COPY_LITERALS:
-    length = read_elias_gamma(FALSE);
+    length = read_interlaced_elias_gamma();
     for (i = 0; i < length; i++) {
         write_byte(read_byte());
     }
@@ -135,15 +127,15 @@ COPY_LITERALS:
     }
 
 /*COPY_FROM_LAST_OFFSET:*/
-    length = read_elias_gamma(FALSE);
+    length = read_interlaced_elias_gamma();
     write_bytes(last_offset, length);
     if (!read_bit()) {
         goto COPY_LITERALS;
     }
 
 COPY_FROM_NEW_OFFSET:
-    last_offset = read_elias_gamma(TRUE);
-    if (!last_offset) {
+    last_offset = read_interlaced_elias_gamma();
+    if (last_offset == 256) {
         save_output();
         if (input_index != partial_counter) {
             fprintf(stderr, "Error: Input file %s too long\n", input_name);
@@ -153,7 +145,7 @@ COPY_FROM_NEW_OFFSET:
     }
     last_offset = ((last_offset-1)<<7)+128-(read_byte()>>1);
     backtrack = TRUE;
-    length = read_elias_gamma(FALSE)+1;
+    length = read_interlaced_elias_gamma()+1;
     write_bytes(last_offset, length);
     if (read_bit()) {
         goto COPY_FROM_NEW_OFFSET;
@@ -166,8 +158,8 @@ int main(int argc, char *argv[]) {
     int forced_mode = FALSE;
     int i;
 
-    printf("DZX0: Data decompressor by Einar Saukas\n");
-    
+    printf("DZX0 v1.1: Data decompressor by Einar Saukas\n");
+
     /* process hidden optional parameters */
     for (i = 1; i < argc && *argv[i] == '-'; i++) {
         if (!strcmp(argv[i], "-f")) {

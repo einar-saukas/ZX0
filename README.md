@@ -19,9 +19,9 @@ This will generate a compressed file called "Cobra.scr.zx0".
 Afterwards you can choose a decompressor routine in assembly Z80, according to
 your requirements for speed and size:
 
-* "Standard" routine: 81 bytes only
-* "Turbo" routine: 93 bytes, about 25% faster
-* "Mega" routine: 249 bytes, about 40% faster
+* "Standard" routine: 70 bytes only
+* "Turbo" routine: 130 bytes, about 20% faster
+* "Mega" routine: 562 bytes, about 25% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
 somewhere in memory. To decompress data, just call the routine specifying the
@@ -84,7 +84,7 @@ compression ratio that can be decompressed quickly and easily.
 The provided **ZX0** decompressor routines in assembly Z80 are fairly small (the
 standard version is 81 bytes only), reasonably fast, easily portable to
 different platforms since they only use main registers BC, DE, HL, A and 
-optionally A' (the ZX81 variant uses PUSH/POP instead), consume very little
+optionally A' (use a backwards variant to avoid using A'), consume very little
 stack space and does not require additional decompression buffer.
 
 The provided **ZX0** decompressor in C writes the output file while reading the
@@ -133,12 +133,12 @@ of the Assembly decompressor, specifying last source address of compressed data
 in HL and last target address in DE.
 
 For instance, if you compile a "backwards" Assembly decompressor routine to
-address 64000, load backwards compressed file "Cobra.scr.zx0" (with size 2201
+address 64000, load backwards compressed file "Cobra.scr.zx0" (with size 2202
 bytes) to address 51200, and want to decompress it directly to the ZX Spectrum
 screen (with 6912 bytes), then execute the following code:
 
 ```
-    LD    HL, 51200+2201-1  ; source (last address of "Cobra.scr.zx0")
+    LD    HL, 51200+2202-1  ; source (last address of "Cobra.scr.zx0")
     LD    DE, 16384+6912-1  ; target (last address of screen memory)
     CALL  64000             ; backwards decompress routine
 ```
@@ -307,7 +307,8 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 ## License
 
 The **ZX0** data compression format and algorithm was designed and implemented by
-**Einar Saukas**.
+**Einar Saukas**. Special thanks to **introspec** for several suggestions and 
+improvements!
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
 this is relevant only if you want to modify its source code and/or incorporate
