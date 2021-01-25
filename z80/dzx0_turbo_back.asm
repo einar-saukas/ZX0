@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Turbo" version (94 bytes, 25% faster) - BACKWARDS VARIANT
+; "Turbo" version (91 bytes, 25% faster) - BACKWARDS VARIANT
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: last source address (compressed data)
@@ -40,8 +40,7 @@ dzx0tb_new_offset:
         rr      c
         inc     bc
         push    bc                      ; preserve new offset
-        ld      bc, $8000               ; obtain length
-        call    dzx0tb_elias_backtrack
+        call    dzx0tb_elias_backtrack  ; obtain length
         inc     bc
         jp      dzx0tb_copy
 dzx0tb_elias:

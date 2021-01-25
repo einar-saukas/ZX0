@@ -19,8 +19,8 @@ This will generate a compressed file called "Cobra.scr.zx0".
 Afterwards you can choose a decompressor routine in assembly Z80, according to
 your requirements for speed and size:
 
-* "Standard" routine: 82 bytes only
-* "Turbo" routine: 96 bytes, about 25% faster
+* "Standard" routine: 81 bytes only
+* "Turbo" routine: 93 bytes, about 25% faster
 * "Mega" routine: 249 bytes, about 40% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
@@ -82,7 +82,7 @@ Fortunately all complexity is limited to the compression process only. The
 compression ratio that can be decompressed quickly and easily.
 
 The provided **ZX0** decompressor routines in assembly Z80 are fairly small (the
-standard version is 82 bytes only), reasonably fast, easily portable to 
+standard version is 81 bytes only), reasonably fast, easily portable to
 different platforms since they only use main registers BC, DE, HL, A and 
 optionally A' (the ZX81 variant uses PUSH/POP instead), consume very little
 stack space and does not require additional decompression buffer.

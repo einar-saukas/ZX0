@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Turbo" version (96 bytes, 25% faster) - ZX81 VARIANT: USE PUSH/POP INSTEAD OF AF'
+; "Turbo" version (93 bytes, 25% faster) - ZX81 VARIANT: USE PUSH/POP INSTEAD OF AF'
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -42,8 +42,7 @@ dzx0t1_new_offset:
         rr      b                       ; last offset bit becomes first length bit
         rr      c
         push    bc                      ; preserve new offset
-        ld      bc, $8000               ; obtain length
-        call    dzx0t1_elias_backtrack
+        call    dzx0t1_elias_backtrack  ; obtain length
         inc     bc
         jp      dzx0t1_copy
 dzx0t1_elias:
