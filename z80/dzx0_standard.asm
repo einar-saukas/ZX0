@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Standard" version (81 bytes only)
+; "Standard" version (70 bytes only)
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -30,11 +30,11 @@ dzx0s_copy:
 dzx0s_new_offset:
         inc     sp                      ; discard last offset
         inc     sp
-        call    dzx0s_elias_size        ; obtain offset MSB
-        ret     nz                      ; check end marker
+        call    dzx0s_elias             ; obtain offset MSB
         ex      af, af'                 ; adjust for negative offset
         xor     a
         sub     c
+        ret     z                       ; check end marker
         ld      b, a
         ex      af, af'
         ld      c, (hl)                 ; obtain offset LSB
@@ -42,29 +42,23 @@ dzx0s_new_offset:
         rr      b                       ; last offset bit becomes first length bit
         rr      c
         push    bc                      ; preserve new offset
-        ld      bc, $8000               ; obtain length
-        call    dzx0s_elias_backtrack
+        ld      bc, 1                   ; obtain length
+        call    nc, dzx0s_elias_backtrack
         inc     bc
         jr      dzx0s_copy
 dzx0s_elias:
-        scf                             ; Elias gamma coding
-dzx0s_elias_size:
-        rr      b
-        rr      c
-        call    dzx0s_next_bit
-dzx0s_elias_backtrack:
-        jr      nc, dzx0s_elias_size
-dzx0s_elias_value:
-        call    nc, dzx0s_next_bit
-        rl      c
-        rl      b
-        jr      nc, dzx0s_elias_value
-        ret
-dzx0s_next_bit:
-        add     a, a                    ; check next bit
-        ret     nz                      ; no more bits left?
+        inc     c                       ; interlaced Elias gamma coding
+dzx0s_elias_loop:
+        add     a, a
+        jr      nz, dzx0s_elias_skip
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
-        ret
+dzx0s_elias_skip:
+        ret     c
+dzx0s_elias_backtrack:
+        add     a, a
+        rl      c
+        rl      b
+        jr      dzx0s_elias_loop
 ; -----------------------------------------------------------------------------
