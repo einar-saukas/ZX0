@@ -42,11 +42,11 @@ dzx0sb_new_offset:
         inc     bc
         push    bc                      ; preserve new offset
         ld      bc, 1                   ; obtain length
-        call    nc, dzx0sb_elias_backtrack
+        call    c, dzx0sb_elias_backtrack
         inc     bc
         jr      dzx0sb_copy
 dzx0sb_elias:
-        inc     c                       ; interlaced Elias gamma coding
+        inc     c                       ; inverted interlaced Elias gamma coding
 dzx0sb_elias_loop:
         add     a, a
         jr      nz, dzx0sb_elias_skip
@@ -54,7 +54,7 @@ dzx0sb_elias_loop:
         dec     hl
         rla
 dzx0sb_elias_skip:
-        ret     c
+        ret     nc
 dzx0sb_elias_backtrack:
         add     a, a
         rl      c
