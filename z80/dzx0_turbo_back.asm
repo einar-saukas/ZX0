@@ -46,8 +46,8 @@ dzx0tb_literals:
         lddr                            ; copy literals
         add     a, a                    ; copy from last offset or new offset?
         jr      c, dzx0tb_new_offset
-        inc     c
-        add     a, a                    ; obtain length
+        inc     c                       ; obtain length
+        add     a, a
         call    c, dzx0tb_elias
         jp      dzx0tb_copy
 dzx0tb_elias_loop:

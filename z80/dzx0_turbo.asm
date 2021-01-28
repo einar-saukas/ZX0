@@ -57,8 +57,8 @@ dzx0t_literals_skip:
         ldir                            ; copy literals
         add     a, a                    ; copy from last offset or new offset?
         jr      c, dzx0t_new_offset
-        inc     c
-        add     a, a                    ; obtain length
+        inc     c                       ; obtain length
+        add     a, a
         jp      nz, dzx0t_last_offset_skip
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
