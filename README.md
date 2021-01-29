@@ -19,7 +19,7 @@ This will generate a compressed file called "Cobra.scr.zx0".
 Afterwards you can choose a decompressor routine in assembly Z80, according to
 your requirements for speed and size:
 
-* "Standard" routine: 70 bytes only
+* "Standard" routine: 69 bytes only
 * "Turbo" routine: 128 bytes, about 20% faster
 * "Mega" routine: 562 bytes, about 25% faster
 

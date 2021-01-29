@@ -59,7 +59,6 @@ int read_bit() {
 
 int read_interlaced_elias_gamma() {
     int value = 1;
-
     while (!read_bit()) {
         value = value << 1 | read_bit();
     }
