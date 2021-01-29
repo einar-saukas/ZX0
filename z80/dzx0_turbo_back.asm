@@ -10,7 +10,7 @@
 dzx0_turbo_back:
         ld      bc, 1                   ; preserve default offset 1
         ld      (dzx0tb_last_offset+1), bc
-        dec     bc
+        dec     c
         ld      a, $80
         jr      dzx0tb_literals
 dzx0tb_new_offset:
