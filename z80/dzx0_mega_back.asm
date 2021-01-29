@@ -10,7 +10,7 @@
 dzx0_mega_back:
         ld      bc, 1                   ; preserve default offset 1
         ld      (dzx0mb_last_offset), bc
-        dec     bc
+        dec     c
         jp      dzx0mb_literals0
 
 dzx0mb_new_offset2:

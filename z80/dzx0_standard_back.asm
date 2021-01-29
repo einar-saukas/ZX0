@@ -10,7 +10,7 @@
 dzx0_standard_back:
         ld      bc, 1                   ; preserve default offset 1
         push    bc
-        dec     bc
+        dec     c
         ld      a, $80
 dzx0sb_literals:
         call    dzx0sb_elias            ; obtain length
