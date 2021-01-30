@@ -1,9 +1,11 @@
 # ZX0
 
-**ZX0** is an optimal data compressor for a custom LZ77/LZSS based compression
-format, that provides a tradeoff between high compression ratio, and extremely
-simple fast decompression. Therefore it's especially appropriate for low-end
-platforms, such as 8-bit computers like the ZX Spectrum.
+**ZX0** is an optimal data compressor for a custom 
+[LZ77/LZSS](https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski) 
+based compression format, that provides a tradeoff between high compression 
+ratio, and extremely simple fast decompression. Therefore it's especially 
+appropriate for low-end platforms, including 8-bit computers like the ZX 
+Spectrum.
 
 
 ## Usage
@@ -60,32 +62,28 @@ dzx0 Cobra.scr.zx0
 
 ## Performance
 
-The **ZX0** compressor algorithm is fairly complex, thus requiring a lot of
-processing to produce an optimal compression. Therefore compressing a few dozen
-Kbs can take several seconds. This delay can be quite inconvenient during
-program development, when you have to repeatedly modify your file, then
-recompress and test everything again. In order to speed up this process, it's
-possible to use **ZX0** in "quick" mode, that will produce a larger compressed
-file but execute much faster:
+The **ZX0** optimal compressor algorithm is fairly complex, thus compressing
+typical files can take a few seconds. During development, you can speed up this
+process simply using **ZX0** in "quick" mode. This will produce a non-optimal
+larger compressed file but execute almost instantly:
 
 ```
 zx0 -q Cobra.scr
 ```
 
-Later, when you finish modifying and testing your file, you can simply compress
-your file again without "quick" mode for maximum compression. Notice that using
-"quick" mode will only affect the size of the compressed file, not its format,
-thus exactly the same decompressor routines will continue to work afterwards.
+This way, you can repeatedly modify your files, then quickly compress and test
+them. Later, when you finish changing these files, you can compress them again
+without "quick" mode for maximum compression. Notice that using "quick" mode
+will only affect the size of the compressed file, not its format. Therefore
+all decompressor routines will continue to work exactly the same way.
 
-Fortunately all complexity is limited to the compression process only. The 
-**ZX0** compression format itself is very simple and efficient, providing a high
-compression ratio that can be decompressed quickly and easily.
-
-The provided **ZX0** decompressor routines in assembly Z80 are fairly small (the
-standard version is 81 bytes only), reasonably fast, easily portable to
-different platforms since they only use main registers BC, DE, HL, A and 
-optionally A' (use a backwards variant to avoid using A'), consume very little
-stack space and does not require additional decompression buffer.
+Fortunately all complexity lies on the compression process only. The **ZX0**
+compression format itself is very simple and efficient, providing a high
+compression ratio that can be decompressed quickly and easily. The provided
+**ZX0** decompressor routines in assembly Z80 are small and fast, they only use
+main registers BC, DE, HL, A and optionally alternate register A' (use the 
+backwards variant to avoid using A'), consume very little stack space and does
+not require additional decompression buffer.
 
 The provided **ZX0** decompressor in C writes the output file while reading the
 compressed file, without keeping it in memory. Therefore it always use the same
@@ -96,9 +94,38 @@ within asymptotically optimal space and time O(n) only, using storage space O(n)
 for input and output files, and only memory space O(w) for processing.
 
 
+## File Format
+
+The ZX0 compressed format is very simple. There are only 3 kinds of blocks:
+
+* Literal (copy next N bytes from compressed file)
+```
+0  Elias(length)  byte[1]  byte[2]  ...  byte[N]
+```
+
+* Copy from last offset (repeat N bytes from last offset)
+```
+0  Elias(length)
+```
+
+* Copy from new offset (repeat N bytes from new offset)
+```
+1  Elias(MSB(offset))  LSB(offset)  Elias(length-1)
+```
+
+**ZX0** needs only 1 bit to distinguish between these blocks, because literal
+blocks cannot be consecutive, and reusing last offset can only happen after a
+literal block. The first block is always a literal, so the first bit is omitted.
+
+The offset MSB and all lengths are stored using interlaced
+[Elias Gamma Coding](https://en.wikipedia.org/wiki/Elias_gamma_coding). The
+offset LSB is stored using 7 bits instead of 8, because it produces better
+results in most practical cases.
+
+
 ## Advanced Features
 
-The **ZX0** compressor contains a few extra "hidden" features, that are slightly 
+The **ZX0** compressor contains a few extra "hidden" features, that are slightly
 harder to use properly, and not supported by the **ZX0** decompressor in C. Please
 read carefully these instructions before attempting to use any of them!
 
@@ -307,7 +334,7 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 ## License
 
 The **ZX0** data compression format and algorithm was designed and implemented by
-**Einar Saukas**. Special thanks to **introspec** for several suggestions and 
+**Einar Saukas**. Special thanks to **introspec** for several suggestions and
 improvements!
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
@@ -319,3 +346,24 @@ The decompressors can be used freely within your own programs (either for the
 ZX Spectrum or any other platform), even for commercial releases. The only
 condition is that you must indicate somehow in your documentation that you have
 used **ZX0**.
+
+
+## Links
+
+Projects using **ZX0**:
+
+* [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
+create MSX videogame cartridges, that includes **ZX0** and **ZX7**.
+
+
+Related projects (by the same author):
+
+* [RCS](https://github.com/einar-saukas/RCS) - Use **ZX0** and **RCS** together
+to improve compression of ZX Spectrum screens.
+
+* [ZX1](https://github.com/einar-saukas/ZX1) - A simpler but faster version
+of **ZX0** (**ZX1** sacrifices about 1.5% compression to run about 15% faster).
+
+* [ZX7](https://spectrumcomputing.co.uk/entry/27996/ZX-Spectrum/ZX7) - A widely
+popular predecessor compressor (now superseded by **ZX0**).
+
