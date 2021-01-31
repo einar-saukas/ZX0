@@ -118,9 +118,9 @@ blocks cannot be consecutive, and reusing last offset can only happen after a
 literal block. The first block is always a literal, so the first bit is omitted.
 
 The offset MSB and all lengths are stored using interlaced
-[Elias Gamma Coding](https://en.wikipedia.org/wiki/Elias_gamma_coding). The
-offset LSB is stored using 7 bits instead of 8, because it produces better
-results in most practical cases.
+[Elias Gamma Coding](https://en.wikipedia.org/wiki/Elias_gamma_coding). When
+offset MSB equals 256 it means EOF. The offset LSB is stored using 7 bits 
+instead of 8, because it produces better results in most practical cases.
 
 
 ## Advanced Features
@@ -333,9 +333,9 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 
 ## License
 
-The **ZX0** data compression format and algorithm was designed and implemented by
-**Einar Saukas**. Special thanks to **introspec** for several suggestions and
-improvements!
+The **ZX0** data compression format and algorithm was designed and implemented
+by **Einar Saukas**. Special thanks to **introspec/spke** for several
+suggestions and improvements!
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
 this is relevant only if you want to modify its source code and/or incorporate
