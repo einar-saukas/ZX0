@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas & introspec
-; "Mega" version (671 bytes, 25% faster) - BACKWARDS VARIANT
+; "Mega" version (410 bytes, 25% faster) - BACKWARDS VARIANT
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: last source address (compressed data)
@@ -16,24 +16,14 @@ dzx0_mega_back:
 dzx0mb_new_offset6:
         inc     c
         add     a, a                    ; obtain offset MSB
-        jp      nc, dzx0mb_new_offset5
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_new_offset3
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_new_offset1
-dzx0mb_elias_offset1:
+        jr      nc, dzx0mb_new_offset5
+dzx0mb_elias_offset5:
         add     a, a
         rl      c
         rl      b
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
         add     a, a
-        jp      c, dzx0mb_elias_offset7
-dzx0mb_new_offset7:
+        jp      c, dzx0mb_elias_offset3
+dzx0mb_new_offset3:
         dec     b
         ret     z                       ; check end marker
         dec     c                       ; adjust for positive offset
@@ -45,15 +35,7 @@ dzx0mb_new_offset7:
         inc     bc
         ld      (dzx0mb_last_offset), bc ; preserve new offset
         ld      bc, 1
-        jp      nc, dzx0mb_length7      ; obtain length
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_length5
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_length3
+        jr      nc, dzx0mb_length3      ; obtain length
 dzx0mb_elias_length3:
         add     a, a
         rl      c
@@ -74,38 +56,20 @@ dzx0mb_literals0:
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
         add     a, a                    ; obtain length
-        jp      nc, dzx0mb_literals7
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_literals5
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_literals3
-dzx0mb_elias_literals3:
+        jr      nc, dzx0mb_literals7
+dzx0mb_elias_literals7:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_literals1
-dzx0mb_literals1:
+        jp      c, dzx0mb_elias_literals5
+dzx0mb_literals5:
         lddr                            ; copy literals
         add     a, a                    ; copy from last offset or new offset?
-        jr      c, dzx0mb_new_offset0
+        jp      c, dzx0mb_new_offset4
         inc     c
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
         add     a, a                    ; obtain length
-        jp      nc, dzx0mb_reuse7
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_reuse5
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_reuse3
+        jr      nc, dzx0mb_reuse3
 dzx0mb_elias_reuse3:
         add     a, a
         rl      c
@@ -126,22 +90,14 @@ dzx0mb_new_offset0:
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
         add     a, a                    ; obtain offset MSB
-        jp      nc, dzx0mb_new_offset7
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_new_offset5
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_new_offset3
-dzx0mb_elias_offset3:
+        jr      nc, dzx0mb_new_offset7
+dzx0mb_elias_offset7:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_offset1
-dzx0mb_new_offset1:
+        jr      c, dzx0mb_elias_offset5
+dzx0mb_new_offset5:
         dec     b
         ret     z                       ; check end marker
         dec     c                       ; adjust for positive offset
@@ -153,23 +109,13 @@ dzx0mb_new_offset1:
         inc     bc
         ld      (dzx0mb_last_offset), bc ; preserve new offset
         ld      bc, 1
-        jp      nc, dzx0mb_length1      ; obtain length
-        add     a, a
-        rl      c
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        add     a, a
-        jp      nc, dzx0mb_length7
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_length5
+        jr      nc, dzx0mb_length5      ; obtain length
 dzx0mb_elias_length5:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_length3
+        jr      c, dzx0mb_elias_length3
 dzx0mb_length3:
         inc     bc
         push    hl                      ; preserve source
@@ -182,46 +128,28 @@ dzx0mb_length3:
 dzx0mb_literals2:
         inc     c
         add     a, a                    ; obtain length
-        jp      nc, dzx0mb_literals1
-        add     a, a
-        rl      c
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        add     a, a
-        jp      nc, dzx0mb_literals7
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_literals5
-dzx0mb_elias_literals5:
+        jr      nc, dzx0mb_literals1
+dzx0mb_elias_literals1:
         add     a, a
         rl      c
         rl      b
-        add     a, a
-        jp      c, dzx0mb_elias_literals3
-dzx0mb_literals3:
-        lddr                            ; copy literals
-        add     a, a                    ; copy from last offset or new offset?
-        jr      c, dzx0mb_new_offset2
-        inc     c
-        add     a, a                    ; obtain length
-        jp      nc, dzx0mb_reuse1
-        add     a, a
-        rl      c
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
         add     a, a
-        jp      nc, dzx0mb_reuse7
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_reuse5
+        jr      c, dzx0mb_elias_literals7
+dzx0mb_literals7:
+        lddr                            ; copy literals
+        add     a, a                    ; copy from last offset or new offset?
+        jp      c, dzx0mb_new_offset6
+        inc     c
+        add     a, a                    ; obtain length
+        jr      nc, dzx0mb_reuse5
 dzx0mb_elias_reuse5:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_reuse3
+        jr      c, dzx0mb_elias_reuse3
 dzx0mb_reuse3:
         push    hl                      ; preserve source
         ld      hl, (dzx0mb_last_offset)
@@ -234,24 +162,16 @@ dzx0mb_reuse3:
 dzx0mb_new_offset2:
         inc     c
         add     a, a                    ; obtain offset MSB
-        jp      nc, dzx0mb_new_offset1
-        add     a, a
-        rl      c
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        add     a, a
-        jp      nc, dzx0mb_new_offset7
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_new_offset5
-dzx0mb_elias_offset5:
+        jr      nc, dzx0mb_new_offset1
+dzx0mb_elias_offset1:
         add     a, a
         rl      c
         rl      b
+        ld      a, (hl)                 ; load another group of 8 bits
+        dec     hl
         add     a, a
-        jp      c, dzx0mb_elias_offset3
-dzx0mb_new_offset3:
+        jr      c, dzx0mb_elias_offset7
+dzx0mb_new_offset7:
         dec     b
         ret     z                       ; check end marker
         dec     c                       ; adjust for positive offset
@@ -263,23 +183,13 @@ dzx0mb_new_offset3:
         inc     bc
         ld      (dzx0mb_last_offset), bc ; preserve new offset
         ld      bc, 1
-        jp      nc, dzx0mb_length3      ; obtain length
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_length1
-        add     a, a
-        rl      c
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        add     a, a
-        jp      nc, dzx0mb_length7
+        jr      nc, dzx0mb_length7      ; obtain length
 dzx0mb_elias_length7:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_length5
+        jr      c, dzx0mb_elias_length5
 dzx0mb_length5:
         inc     bc
         push    hl                      ; preserve source
@@ -292,46 +202,28 @@ dzx0mb_length5:
 dzx0mb_literals4:
         inc     c
         add     a, a                    ; obtain length
-        jp      nc, dzx0mb_literals3
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_literals1
-        add     a, a
-        rl      c
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        add     a, a
-        jp      nc, dzx0mb_literals7
-dzx0mb_elias_literals7:
+        jr      nc, dzx0mb_literals3
+dzx0mb_elias_literals3:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_literals5
-dzx0mb_literals5:
+        jr      c, dzx0mb_elias_literals1
+dzx0mb_literals1:
         lddr                            ; copy literals
         add     a, a                    ; copy from last offset or new offset?
-        jr      c, dzx0mb_new_offset4
+        jp      c, dzx0mb_new_offset0
         inc     c
-        add     a, a                    ; obtain length
-        jp      nc, dzx0mb_reuse3
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_reuse1
-        add     a, a
-        rl      c
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
-        add     a, a
-        jp      nc, dzx0mb_reuse7
+        add     a, a                    ; obtain length
+        jr      nc, dzx0mb_reuse7
 dzx0mb_elias_reuse7:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_reuse5
+        jr      c, dzx0mb_elias_reuse5
 dzx0mb_reuse5:
         push    hl                      ; preserve source
         ld      hl, (dzx0mb_last_offset)
@@ -345,23 +237,13 @@ dzx0mb_new_offset4:
         inc     c
         add     a, a                    ; obtain offset MSB
         jp      nc, dzx0mb_new_offset3
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_new_offset1
-        add     a, a
-        rl      c
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
-        add     a, a
-        jp      nc, dzx0mb_new_offset7
-dzx0mb_elias_offset7:
+dzx0mb_elias_offset3:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      c, dzx0mb_elias_offset5
-dzx0mb_new_offset5:
+        jr      c, dzx0mb_elias_offset1
+dzx0mb_new_offset1:
         dec     b
         ret     z                       ; check end marker
         dec     c                       ; adjust for positive offset
@@ -373,15 +255,7 @@ dzx0mb_new_offset5:
         inc     bc
         ld      (dzx0mb_last_offset), bc ; preserve new offset
         ld      bc, 1
-        jp      nc, dzx0mb_length5      ; obtain length
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_length3
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_length1
+        jp      nc, dzx0mb_length1      ; obtain length
 dzx0mb_elias_length1:
         add     a, a
         rl      c
@@ -389,7 +263,7 @@ dzx0mb_elias_length1:
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
         add     a, a
-        jp      c, dzx0mb_elias_length7
+        jr      c, dzx0mb_elias_length7
 dzx0mb_length7:
         inc     bc
         push    hl                      ; preserve source
@@ -403,36 +277,18 @@ dzx0mb_literals6:
         inc     c
         add     a, a                    ; obtain length
         jp      nc, dzx0mb_literals5
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_literals3
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_literals1
-dzx0mb_elias_literals1:
+dzx0mb_elias_literals5:
         add     a, a
         rl      c
         rl      b
-        ld      a, (hl)                 ; load another group of 8 bits
-        dec     hl
         add     a, a
-        jp      c, dzx0mb_elias_literals7
-dzx0mb_literals7:
+        jr      c, dzx0mb_elias_literals3
+dzx0mb_literals3:
         lddr                            ; copy literals
         add     a, a                    ; copy from last offset or new offset?
-        jp      c, dzx0mb_new_offset6
+        jp      c, dzx0mb_new_offset2
         inc     c
         add     a, a                    ; obtain length
-        jp      nc, dzx0mb_reuse5
-        add     a, a
-        rl      c
-        add     a, a
-        jp      nc, dzx0mb_reuse3
-        add     a, a
-        rl      c
-        add     a, a
         jp      nc, dzx0mb_reuse1
 dzx0mb_elias_reuse1:
         add     a, a
@@ -441,7 +297,7 @@ dzx0mb_elias_reuse1:
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
         add     a, a
-        jp      c, dzx0mb_elias_reuse7
+        jr      c, dzx0mb_elias_reuse7
 dzx0mb_reuse7:
         push    hl                      ; preserve source
         ld      hl, (dzx0mb_last_offset)
