@@ -1,11 +1,14 @@
 # ZX0
 
-**ZX0** is an optimal data compressor for a custom 
-[LZ77/LZSS](https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski) 
-based compression format, that provides a tradeoff between high compression 
-ratio, and extremely simple fast decompression. Therefore it's especially 
-appropriate for low-end platforms, including 8-bit computers like the ZX 
+**ZX0** is an optimal data compressor for a custom
+[LZ77/LZSS](https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski)
+based compression format, that provides a tradeoff between high compression
+ratio, and extremely simple fast decompression. Therefore it's especially
+appropriate for low-end platforms, including 8-bit computers like the ZX
 Spectrum.
+
+A comparison with other similar compressors (courtesy of **introspec/spke**) can be
+seen [here](https://introspec.retroscene.org/compression/pareto_20210128.png).
 
 
 ## Usage
@@ -353,7 +356,7 @@ used **ZX0**.
 Projects using **ZX0**:
 
 * [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
-create MSX videogame cartridges, that provides support for both **ZX0** and 
+create MSX videogame cartridges, that provides support for both **ZX0** and
 **ZX7**.
 
 * [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
