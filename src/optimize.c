@@ -28,6 +28,8 @@
 
 #include "zx0.h"
 
+#define MAX_SCALE 50
+
 #define minimum(a,b) (a < b ? a : b)
 
 int offset_ceiling(int index, int offset_limit) {
@@ -55,6 +57,7 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
     int offset;
     int length;
     int bits2;
+    int dots = 2;
     int max_offset = offset_ceiling(input_size-1, offset_limit);
 
     /* allocate all main data structures at once */
@@ -71,6 +74,8 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
 
     /* start with fake block */
     assign(&(last_match[INITIAL_OFFSET]), allocate(-1, skip-1, INITIAL_OFFSET, 0, NULL));
+
+    printf("[");
 
     /* process remaining bytes */
     for (index = skip; index < input_size; index++) {
@@ -121,7 +126,15 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
                 }
             }
         }
+
+        if (index*MAX_SCALE/input_size > dots) {
+            printf(".");
+            fflush(stdout);
+            dots++;
+        }
     }
+
+    printf("]\n");
 
     return optimal[input_size-1];
 }

@@ -99,7 +99,7 @@ for input and output files, and only memory space O(w) for processing.
 
 ## File Format
 
-The ZX0 compressed format is very simple. There are only 3 kinds of blocks:
+The **ZX0** compressed format is very simple. There are only 3 kinds of blocks:
 
 * Literal (copy next N bytes from compressed file)
 ```
@@ -264,7 +264,7 @@ In others, it may not even make any difference. It mostly depends on how much
 similarity exists between data to be compressed and its provided prefix.
 
 
-#### _COMPRESSING BACKWARDS WITH SUFIX_
+#### _COMPRESSING BACKWARDS WITH SUFFIX_
 
 Both features above can be used together. A file can be compressed backwards,
 with an optional parameter to specify how many bytes should be skipped (not
@@ -274,7 +274,7 @@ below:
 ```
        compressed data
     |-------------------|
-                 decompressed data              sufix
+                 decompressed data             suffix
         |---------------------------------|--------------|
                                      << start
     <--->                                 <-------------->
@@ -286,7 +286,7 @@ overlaps the compressed data itself, lowest address of compressed data must be
 at least "delta" bytes lower than lowest address of decompressed data.
 
 For instance, if you want to skip the last 768 bytes of a certain input file and
-compress everything else (possibly referencing this "sufix" of 768 bytes), then
+compress everything else (possibly referencing this "suffix" of 768 bytes), then
 use the command-line compressor as follows:
 
 ```
@@ -296,39 +296,39 @@ zx0 -b +768 Cobra.cbr
 In previous example, suppose the action game now stores level-specific sprites
 in the memory area from address 33000 to 33511 (512 bytes), just before generic
 sprites that are stored from address 33512 to 34535 (1024 bytes). In this case,
-these generic sprites could be used as sufix when compressing and decompressing
+these generic sprites could be used as suffix when compressing and decompressing
 level-specific data as needed, in an attempt to improve compression. To compress
-each level using "generic.gfx" as a 1024 bytes sufix, use the command-line
+each level using "generic.gfx" as a 1024 bytes suffix, use the command-line
 compressor as follows:
 
 ```
-copy /b "level_1.gfx+generic.gfx level_1_sufixed.gfx
-zx0 -b +1024 level_1_sufixed.gfx
+copy /b "level_1.gfx+generic.gfx level_1_suffixed.gfx
+zx0 -b +1024 level_1_suffixed.gfx
 
-copy /b "level_2.gfx+generic.gfx level_2_sufixed.gfx
-zx0 -b +1024 level_2_sufixed.gfx
+copy /b "level_2.gfx+generic.gfx level_2_suffixed.gfx
+zx0 -b +1024 level_2_suffixed.gfx
 
-copy /b "level_3.gfx+generic.gfx level_3_sufixed.gfx
-zx0 -b +1024 level_3_sufixed.gfx
+copy /b "level_3.gfx+generic.gfx level_3_suffixed.gfx
+zx0 -b +1024 level_3_suffixed.gfx
 ```
 
 To decompress it later, use the backwards variant of the Assembly decompressor.
 In this case, if you compile a "backwards" decompressor routine to address
-64000, and load compressed file "level_1_sufixed.gfx.zx0" (with 217 bytes) to
+64000, and load compressed file "level_1_suffixed.gfx.zx0" (with 217 bytes) to
 address 39000 for instance, decompressing it will require the following code:
 
 ```
-    LD    HL, 39000+217-1  ; source (last address of "level_1_sufixed.gfx.zx0")
+    LD    HL, 39000+217-1  ; source (last address of "level_1_suffixed.gfx.zx0")
     LD    DE, 33000+512-1  ; target (last address of level-specific data)
     CALL  64000            ; backwards decompress routine
 ```
 
-Analogously, decompression will only work properly if exactly the same sufix
+Analogously, decompression will only work properly if exactly the same suffix
 data is present in the memory area immediately following the decompression area.
-Therefore you must be extremely careful to ensure the sufix area does not store
-variables, self-modifying code, or anything else that may change sufix content
+Therefore you must be extremely careful to ensure the suffix area does not store
+variables, self-modifying code, or anything else that may change suffix content
 between compression and decompression. Also don't forget to recompress your
-files whenever you modify a sufix!
+files whenever you modify a suffix!
 
 Also if you are using "in-place" decompression, you must leave a small margin of
 "delta" bytes of compressed data just before the decompression area.
