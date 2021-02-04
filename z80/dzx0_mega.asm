@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas & introspec
-; "Mega" version (414 bytes, 25% faster)
+; "Mega" version (412 bytes, 25% faster)
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -9,7 +9,7 @@
 
 dzx0_mega:
         ld      bc, $ffff               ; preserve default offset 1
-        ld      (dzx0m_last_offset), bc
+        ld      (dzx0m_last_offset+1), bc
         inc     bc
         jr      dzx0m_literals0
 
@@ -34,7 +34,7 @@ dzx0m_new_offset3:
         inc     hl
         rr      b                       ; last offset bit becomes first length bit
         rr      c
-        ld      (dzx0m_last_offset), bc ; preserve new offset
+        ld      (dzx0m_last_offset+1), bc ; preserve new offset
         ld      bc, 1
         jr      c, dzx0m_length3        ; obtain length
 dzx0m_elias_length3:
@@ -46,7 +46,7 @@ dzx0m_elias_length3:
 dzx0m_length1:
         inc     bc
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+        ld      hl, (dzx0m_last_offset+1)
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -79,7 +79,7 @@ dzx0m_elias_reuse3:
         jp      nc, dzx0m_elias_reuse1
 dzx0m_reuse1:
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+        ld      hl, (dzx0m_last_offset+1)
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -109,7 +109,7 @@ dzx0m_new_offset5:
         inc     hl
         rr      b                       ; last offset bit becomes first length bit
         rr      c
-        ld      (dzx0m_last_offset), bc ; preserve new offset
+        ld      (dzx0m_last_offset+1), bc ; preserve new offset
         ld      bc, 1
         jr      c, dzx0m_length5        ; obtain length
 dzx0m_elias_length5:
@@ -121,7 +121,7 @@ dzx0m_elias_length5:
 dzx0m_length3:
         inc     bc
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+        ld      hl, (dzx0m_last_offset+1)
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -154,7 +154,7 @@ dzx0m_elias_reuse5:
         jr      nc, dzx0m_elias_reuse3
 dzx0m_reuse3:
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+        ld      hl, (dzx0m_last_offset+1)
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -184,7 +184,7 @@ dzx0m_new_offset7:
         inc     hl
         rr      b                       ; last offset bit becomes first length bit
         rr      c
-        ld      (dzx0m_last_offset), bc ; preserve new offset
+        ld      (dzx0m_last_offset+1), bc ; preserve new offset
         ld      bc, 1
         jr      c, dzx0m_length7        ; obtain length
 dzx0m_elias_length7:
@@ -196,7 +196,7 @@ dzx0m_elias_length7:
 dzx0m_length5:
         inc     bc
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+        ld      hl, (dzx0m_last_offset+1)
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -229,7 +229,7 @@ dzx0m_elias_reuse7:
         jr      nc, dzx0m_elias_reuse5
 dzx0m_reuse5:
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+        ld      hl, (dzx0m_last_offset+1)
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -257,7 +257,7 @@ dzx0m_new_offset1:
         inc     hl
         rr      b                       ; last offset bit becomes first length bit
         rr      c
-        ld      (dzx0m_last_offset), bc ; preserve new offset
+        ld      (dzx0m_last_offset+1), bc ; preserve new offset
         ld      bc, 1
         jp      c, dzx0m_length1        ; obtain length
 dzx0m_elias_length1:
@@ -271,7 +271,7 @@ dzx0m_elias_length1:
 dzx0m_length7:
         inc     bc
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+        ld      hl, (dzx0m_last_offset+1)
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -304,7 +304,8 @@ dzx0m_elias_reuse1:
         jr      nc, dzx0m_elias_reuse7
 dzx0m_reuse7:
         push    hl                      ; preserve source
-        ld      hl, (dzx0m_last_offset)
+dzx0m_last_offset:
+        ld      hl, 0
         add     hl, de                  ; calculate destination - offset
         ldir                            ; copy from offset
         pop     hl                      ; restore source
@@ -312,6 +313,4 @@ dzx0m_reuse7:
         jr      nc, dzx0m_literals6
 
         jp      dzx0m_new_offset6
-dzx0m_last_offset:
-        dw      0
 ; -----------------------------------------------------------------------------
