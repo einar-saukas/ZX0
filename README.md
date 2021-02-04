@@ -23,7 +23,7 @@ your requirements for speed and size:
 
 * "Standard" routine: 69 bytes only
 * "Turbo" routine: 128 bytes, about 20% faster
-* "Mega" routine: 414 bytes, about 25% faster
+* "Mega" routine: 412 bytes, about 25% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
 somewhere in memory. To decompress data, just call the routine specifying the
@@ -353,8 +353,11 @@ used **ZX0**.
 Projects using **ZX0**:
 
 * [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
-create MSX videogame cartridges, that includes **ZX0** and **ZX7**.
+create MSX videogame cartridges, that provides support for both **ZX0** and 
+**ZX7**.
 
+* [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
+assembler, that provides support for both **ZX0** and **ZX7**.
 
 Related projects (by the same author):
 
@@ -366,4 +369,3 @@ of **ZX0** (**ZX1** sacrifices about 1.5% compression to run about 15% faster).
 
 * [ZX7](https://spectrumcomputing.co.uk/entry/27996/ZX-Spectrum/ZX7) - A widely
 popular predecessor compressor (now superseded by **ZX0**).
-
