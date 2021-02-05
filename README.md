@@ -362,8 +362,8 @@ and **ZX7**.
 * [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
 assembler, that provides support for **ZX0** and **ZX7**.
 
-* [Sonic GX](http://norecess.cpcscene.net/) - A port of Sonic the Hedgehog 
-for the GX-4000, that stores all data compressed with **ZX0**.
+* [Sonic GX](http://norecess.cpcscene.net/) - A remake of Sonic the Hedgehog
+for the GX-4000, that stores all compressed data using **ZX0**.
 
 Related projects (by the same author):
 
