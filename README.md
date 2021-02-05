@@ -7,8 +7,8 @@ ratio, and extremely simple fast decompression. Therefore it's especially
 appropriate for low-end platforms, including 8-bit computers like the ZX
 Spectrum.
 
-A comparison with other similar compressors (courtesy of **introspec/spke**) can be
-seen [here](https://introspec.retroscene.org/compression/pareto_20210128.png).
+A comparison with other compressors (courtesy of **introspec/spke**) can be seen 
+[here](https://introspec.retroscene.org/compression/pareto_20210128.png).
 
 
 ## Usage
@@ -356,11 +356,14 @@ used **ZX0**.
 Projects using **ZX0**:
 
 * [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
-create MSX videogame cartridges, that provides support for both **ZX0** and
-**ZX7**.
+create MSX videogame cartridges, that provides support for **ZX0**, **ZX1**,
+and **ZX7**.
 
 * [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
-assembler, that provides support for both **ZX0** and **ZX7**.
+assembler, that provides support for **ZX0** and **ZX7**.
+
+* [Sonic GX](http://norecess.cpcscene.net/) - A port of Sonic the Hedgehog 
+for the GX-4000, that stores all data compressed with **ZX0**.
 
 Related projects (by the same author):
 
@@ -368,7 +371,7 @@ Related projects (by the same author):
 to improve compression of ZX Spectrum screens.
 
 * [ZX1](https://github.com/einar-saukas/ZX1) - A simpler but faster version
-of **ZX0** (**ZX1** sacrifices about 1.5% compression to run about 15% faster).
+of **ZX0**, that sacrifices about 1.5% compression to run about 15% faster.
 
 * [ZX7](https://spectrumcomputing.co.uk/entry/27996/ZX-Spectrum/ZX7) - A widely
 popular predecessor compressor (now superseded by **ZX0**).
