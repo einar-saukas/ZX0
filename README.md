@@ -355,6 +355,9 @@ used **ZX0**.
 
 Projects using **ZX0**:
 
+* [z88dk](http://www.z88dk.org/) - The main C compiler for Z80 machines, that
+provides support for **ZX0** and **ZX7**.
+
 * [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
 create MSX videogame cartridges, that provides support for **ZX0**, **ZX1**,
 and **ZX7**.
@@ -364,6 +367,9 @@ assembler, that provides support for **ZX0** and **ZX7**.
 
 * [Sonic GX](http://norecess.cpcscene.net/) - A remake of Sonic the Hedgehog
 for the GX-4000, that stores all compressed data using **ZX0**.
+
+* [NSID_Emu](https://spectrumcomputing.co.uk/forums/viewtopic.php?f=8&t=2786) - 
+The SID Player for ZX Spectrum stores all compressed data using **ZX0**.
 
 Related projects (by the same author):
 
