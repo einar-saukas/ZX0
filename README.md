@@ -7,7 +7,7 @@ ratio, and extremely simple fast decompression. Therefore it's especially
 appropriate for low-end platforms, including 8-bit computers like the ZX
 Spectrum.
 
-A comparison with other compressors (courtesy of **introspec/spke**) can be seen 
+A comparison with other compressors (courtesy of **introspec/spke**) can be seen
 [here](https://introspec.retroscene.org/compression/pareto_20210128.png).
 
 
@@ -103,17 +103,17 @@ The **ZX0** compressed format is very simple. There are only 3 kinds of blocks:
 
 * Literal (copy next N bytes from compressed file)
 ```
-0  Elias(length)  byte[1]  byte[2]  ...  byte[N]
+    0  Elias(length)  byte[1]  byte[2]  ...  byte[N]
 ```
 
 * Copy from last offset (repeat N bytes from last offset)
 ```
-0  Elias(length)
+    0  Elias(length)
 ```
 
 * Copy from new offset (repeat N bytes from new offset)
 ```
-1  Elias(MSB(offset))  LSB(offset)  Elias(length-1)
+    1  Elias(MSB(offset))  LSB(offset)  Elias(length-1)
 ```
 
 **ZX0** needs only 1 bit to distinguish between these blocks, because literal
@@ -353,7 +353,13 @@ used **ZX0**.
 
 ## Links
 
-Projects using **ZX0**:
+**ZX0** ported to other platforms:
+
+* [Intel 8080](https://gitlab.com/ivagor/dezx0)
+
+* [PDP11](https://gitlab.com/ivagor/dezx0)
+
+Tools supporting **ZX0**:
 
 * [z88dk](http://www.z88dk.org/) - The main C compiler for Z80 machines, that
 provides built-in support for **ZX0** and **ZX7**.
@@ -362,11 +368,20 @@ provides built-in support for **ZX0** and **ZX7**.
 Z80 machines, that provides built-in support for **ZX0**.
 
 * [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
-create MSX videogame cartridges, that provides built-in support 
+create MSX videogame cartridges, that provides built-in support
 for **ZX0**, **ZX1**, and **ZX7**.
 
 * [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
 assembler, that provides built-in support for **ZX0** and **ZX7**.
+
+Projects using **ZX0**:
+
+* [NSID_Emu](https://spectrumcomputing.co.uk/forums/viewtopic.php?f=8&t=2786) -
+The SID Player for ZX Spectrum stores all compressed data using **ZX0**.
+
+* [ZX Interface 2 Cartridges](http://www.fruitcake.plus.com/Sinclair/Interface2/Cartridges/Interface2_RC_New_3rdParty_GameConversions.htm) -
+Several ZX Interface 2 conversions were created using either **ZX0** or **ZX7**
+so a full game could fit into a small 16K cartridge.
 
 * [Sonic GX](http://norecess.cpcscene.net/) - A remake of Sonic the Hedgehog
 for the GX-4000, that stores all compressed data using **ZX0**.
@@ -374,13 +389,6 @@ for the GX-4000, that stores all compressed data using **ZX0**.
 * [Rit and Tam](http://www.indieretronews.com/2021/02/rit-and-tam-arcade-classic-rodland-is.html) -
 A remake of Rodland for the Amstrad, that stores all compressed data
 using **ZX0**.
-
-* [NSID_Emu](https://spectrumcomputing.co.uk/forums/viewtopic.php?f=8&t=2786) -
-The SID Player for ZX Spectrum stores all compressed data using **ZX0**.
-
-* [ZX Interface 2 Cartridges](http://www.fruitcake.plus.com/Sinclair/Interface2/Cartridges/Interface2_RC_New_3rdParty_GameConversions.htm) -
-Several ZX Interface 2 conversions were created using either **ZX0** or **ZX7** 
-so a full game could fit into a small 16K cartridge.
 
 Related projects (by the same author):
 
