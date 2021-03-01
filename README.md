@@ -8,7 +8,7 @@ appropriate for low-end platforms, including 8-bit computers like the ZX
 Spectrum.
 
 A comparison with other compressors (courtesy of **introspec/spke**) can be seen
-[here](https://introspec.retroscene.org/compression/pareto_20210128.png).
+[here](https://www.cpcwiki.eu/forum/programming/new-cruncher-zx0/msg197727/#msg197727).
 
 
 ## Usage
@@ -373,6 +373,10 @@ for **ZX0**, **ZX1**, and **ZX7**.
 
 * [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
 assembler, that provides built-in support for **ZX0** and **ZX7**.
+
+* [ConvImgCpc](https://github.com/DemoniakLudo/ConvImgCpc) - An image
+conversion utility for Amstrad CPC, that provides built-in support 
+for **ZX0** and **ZX1**.
 
 Projects using **ZX0**:
 
