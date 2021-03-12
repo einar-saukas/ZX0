@@ -99,7 +99,7 @@ for input and output files, and only memory space O(w) for processing.
 
 ## File Format
 
-The **ZX0** compressed format is very simple. There are only 3 kinds of blocks:
+The **ZX0** compressed format is very simple. There are only 3 types of blocks:
 
 * Literal (copy next N bytes from compressed file)
 ```
@@ -354,6 +354,8 @@ used **ZX0**.
 ## Links
 
 **ZX0** ported to other platforms:
+
+* [6502](https://github.com/bboxy/bitfire/tree/master/bitfire/zx0/6502)
 
 * [Intel 8080](https://gitlab.com/ivagor/dezx0)
 
