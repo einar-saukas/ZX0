@@ -355,9 +355,13 @@ used **ZX0**.
 
 **ZX0** ported to other platforms:
 
-* [6502](https://github.com/bboxy/bitfire/tree/master/bitfire/zx0/6502)
+* [Hitachi 6309](https://github.com/dougmasten/zx0-6x09)
 
 * [Intel 8080](https://gitlab.com/ivagor/dezx0)
+
+* [MOS 6502](https://github.com/bboxy/bitfire/tree/master/bitfire/zx0/6502)
+
+* [Motorola 6809](https://github.com/dougmasten/zx0-6x09)
 
 * [PDP11](https://gitlab.com/ivagor/dezx0)
 
@@ -382,6 +386,10 @@ for **ZX0** and **ZX1**.
 
 Projects using **ZX0**:
 
+* [Bitfire](https://github.com/bboxy/bitfire) - A disk image loader/generator
+for Commodore 64, that stores all compressed data using a modified version
+of **ZX0**.
+
 * [NSID_Emu](https://spectrumcomputing.co.uk/forums/viewtopic.php?f=8&t=2786) -
 The SID Player for ZX Spectrum stores all compressed data using **ZX0**.
 
@@ -400,6 +408,8 @@ Related projects (by the same author):
 
 * [RCS](https://github.com/einar-saukas/RCS) - Use **ZX0** and **RCS** together
 to improve compression of ZX Spectrum screens.
+
+* [ZX0](https://github.com/einar-saukas/ZX0) - The official **ZX0** repository.
 
 * [ZX1](https://github.com/einar-saukas/ZX1) - A simpler but faster version
 of **ZX0**, that sacrifices about 1.5% compression to run about 15% faster.
