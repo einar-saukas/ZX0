@@ -355,6 +355,8 @@ used **ZX0**.
 
 **ZX0** ported to other platforms:
 
+* [DEC PDP11](https://gitlab.com/ivagor/dezx0)
+
 * [Hitachi 6309](https://github.com/dougmasten/zx0-6x09)
 
 * [Intel 8080](https://gitlab.com/ivagor/dezx0)
@@ -362,8 +364,6 @@ used **ZX0**.
 * [MOS 6502](https://github.com/bboxy/bitfire/tree/master/bitfire/zx0/6502)
 
 * [Motorola 6809](https://github.com/dougmasten/zx0-6x09)
-
-* [PDP11](https://gitlab.com/ivagor/dezx0)
 
 Tools supporting **ZX0**:
 
@@ -413,6 +413,9 @@ to improve compression of ZX Spectrum screens.
 
 * [ZX1](https://github.com/einar-saukas/ZX1) - A simpler but faster version
 of **ZX0**, that sacrifices about 1.5% compression to run about 15% faster.
+
+* [ZX2](https://github.com/einar-saukas/ZX2) - A minimalist version of **ZX1**,
+intended for compressing very small files.
 
 * [ZX7](https://spectrumcomputing.co.uk/entry/27996/ZX-Spectrum/ZX7) - A widely
 popular predecessor compressor (now superseded by **ZX0**).
