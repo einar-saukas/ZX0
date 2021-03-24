@@ -39,140 +39,207 @@
 ;     misrepresented as being the original software.
 ;  3. This notice may not be removed or altered from any source distribution.
 
-		MACRO	RELOAD_BITS
-			ld a,(hl) : inc hl : rla
-		ENDM
+DecompressZX0:
+        ld      ix, CopyMatch1
+        ld      bc, $ffff
+        ld      (PrevOffset+1), bc      ; default offset is -1
+        inc     bc
+        ld      a, $80
+        jr      RunOfLiterals           ; BC is assumed to contains 0 most of the time
 
-		MACRO	INLINE_READ_GAMMA
-.ReadGammaBits		add a : rl c : add a : jr nc,.ReadGammaBits
-		ENDM
+        ; 7-bit offsets allow additional optimizations, based on the facts that C==0 and AF' has C ON!
+ShorterOffsets:
+        ld      (ix+PrevOffset+2-CopyMatch1), $ff  ; the top byte of the offset is always $FF
+        ex      af, af'
+        ld      a, (hl)
+        inc     hl
+        rra
+        ld      (PrevOffset+1), a       ; note that AF' always has flag C ON
+        jr      nc, LongerMatch
 
-@DecompressZX0:		ld ix,CopyMatch1
-			ld bc,#FFFF : ld (PrevOffset),bc				; default offset is -1
-			inc bc : ld a,#80 : jr RunOfLiterals				; BC is assumed to contains 0 most of the time
-			
-ShorterOffsets			; 7-bit offsets allow additional optimizations,
-				; based on the facts that C==0 and AF' has C ON!
-				ld (ix+PrevOffset+1-CopyMatch1),#FF			; the top byte of the offset is always #FF
-				exa : ld a,(hl) : inc hl
-				rra : ld (PrevOffset),a					; note that AF' always has flag C ON
+CopyMatch2:                             ; the case of matches with len=2
+        ex      af, af'
+        ld      c, 2
 
-			jr nc,LongerMatch
+        ; the faster match copying code
+CopyMatch1:
+        push    hl                      ; preserve source
 
-CopyMatch2			; the case of matches with len=2
-				exa : ld c,2
+PrevOffset:
+        ld      hl, $ffff               ; restore offset (default offset is -1)
+        add     hl, de                  ; HL = dest - offset
+        ldir
+        pop     hl                      ; restore source
 
-CopyMatch1			; the faster match copying code
-				push hl							; preserve source
-PrevOffset			EQU $+1 : ld hl,#FFFF					; restore offset (default offset is -1)
-				add hl,de						; HL = dest - offset
-				ldir
-				pop hl							; restore source
+        ; after a match you can have either
+        ; 0 + <elias length> = run of literals, or
+        ; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
+AfterMatch1:
+        add     a, a
+        jr      nc, RunOfLiterals
 
-			; after a match you can have either
-			; 0 + <elias length> = run of literals, or
-			; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
-AfterMatch1		add a : jr nc,RunOfLiterals
+UsualMatch:                             ; this is the case of usual match+offset
+        add     a, a
+        jr      nc, LongerOffets
+        jr      nz, ShorterOffsets      ; NZ after NC == "confirmed C"
+        
+        ld      a, (hl)                 ; reload bits
+        inc     hl
+        rla
 
-UsualMatch:			; this is the case of usual match+offset
-				add a : jr nc,LongerOffets : jr nz,ShorterOffsets	; NZ after NC == "confirmed C"
-					RELOAD_BITS : jr c,ShorterOffsets
+        jr      c, ShorterOffsets
 
-LongerOffets			inc c : INLINE_READ_GAMMA				; reading gamma requires C=1
-				call z,ReloadReadGamma
+LongerOffets:
+        inc     c
 
-ProcessOffset			exa : xor a : sub c
-				ret z							; end-of-data marker (only checked for longer offsets)
+        add     a, a                    ; inline read gamma
+        rl      c
+        add     a, a
+        jr      nc, $-4
 
-				rra : ld (PrevOffset+1),a
-				ld a,(hl) : inc hl
-				rra : ld (PrevOffset),a
+        call    z, ReloadReadGamma
 
-			; lowest bit is the first bit of the gamma code for length
-			jr c,CopyMatch2
+ProcessOffset:
+        ex      af, af'
+        xor     a
+        sub     c
+        ret     z                       ; end-of-data marker (only checked for longer offsets)
+        rra
+        ld      (PrevOffset+2),a
+        ld      a, (hl)
+        inc     hl
+        rra
+        ld      (PrevOffset+1), a
 
-				; this wastes 1 t-state for longer matches far away,
-				; but saves 4 t-states for longer nearby (seems to pay off in testing)
-				ld c,b
-LongerMatch			inc c
-				; doing SCF here ensures that AF' has flag C ON and costs
-				; cheaper than doing SCF in the ShortestOffsets branch
-				scf : exa
+        ; lowest bit is the first bit of the gamma code for length
+        jr      c, CopyMatch2
 
-				INLINE_READ_GAMMA
-				call z,ReloadReadGamma
-				inc bc
+        ; this wastes 1 t-state for longer matches far away,
+        ; but saves 4 t-states for longer nearby (seems to pay off in testing)
+        ld      c, b
+LongerMatch:
+        inc     c
+        ; doing SCF here ensures that AF' has flag C ON and costs
+        ; cheaper than doing SCF in the ShortestOffsets branch
+        scf
+        ex      af, af'
 
-CopyMatch3			push hl						; preserve source
-				ld hl,(PrevOffset)				; restore offset
-				add hl,de					; HL = dest - offset
-				; because BC>=3, we can do 2 x LDI safely
-				ldi : ldi : ldir
-				pop hl						; restore source
+        add     a, a                    ; inline read gamma
+        rl      c
+        add     a, a
+        jr      nc, $-4
 
-			; after a match you can have either
-			; 0 + <elias length> = run of literals, or
-			; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
-AfterMatch3		add a : jr c,UsualMatch
+        call    z,ReloadReadGamma
+        inc     bc
 
-RunOfLiterals:			inc c : add a : jr nc,LongerRun : jr nz,CopyLiteral	; NZ after NC == "confirmed C"
-					RELOAD_BITS : jr c,CopyLiteral
+CopyMatch3:
+        push    hl                      ; preserve source
+        ld      hl, (PrevOffset+1)      ; restore offset
+        add     hl, de                  ; HL = dest - offset
 
-LongerRun			INLINE_READ_GAMMA : jr nz,CopyLiterals
-					RELOAD_BITS
-				call nc,ReadGammaAligned
+        ; because BC>=3, we can do 2 x LDI safely
+        ldi
+        ldi
+        ldir
+        pop     hl                      ; restore source
 
-CopyLiterals			ldi
-CopyLiteral			ldir
+        ; after a match you can have either
+        ; 0 + <elias length> = run of literals, or
+        ; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
+AfterMatch3:
+        add     a, a
+        jr      c, UsualMatch
 
-			; after a literal run you can have either
-			; 0 + <elias length> = match using a repeated offset, or
-			; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
-			add a : jr c,UsualMatch
+RunOfLiterals:
+        inc     c
+        add     a, a
+        jr      nc, LongerRun
+        jr      nz, CopyLiteral         ; NZ after NC == "confirmed C"
+        
+        ld      a, (hl)                 ; reload bits
+        inc     hl
+        rla
 
-RepMatch:			inc c : add a : jr nc,LongerRepMatch : jr nz,CopyMatch1	; NZ after NC == "confirmed C"
-					RELOAD_BITS : jr c,CopyMatch1
+        jr      c, CopyLiteral
 
-LongerRepMatch			INLINE_READ_GAMMA
-				jp nz,CopyMatch1
+LongerRun:
+        add     a, a                    ; inline read gamma
+        rl      c
+        add     a, a
+        jr      nc, $-4
 
-				; this is a crafty equivalent of
-				; CALL ReloadReadGamma : JP CopyMatch1
-				push ix
+        jr      nz, CopyLiterals
+        
+        ld      a, (hl)                 ; reload bits
+        inc     hl
+        rla
 
-;
-;  the subroutine for reading the remainder of the partly read Elias gamma code.
-;  it has two entry points: ReloadReadGamma first refills the bit reservoir in A,
-;  while ReadGammaAligned assumes that the bit reservoir has just been refilled.
+        call    nc, ReadGammaAligned
 
-ReloadReadGamma:	RELOAD_BITS
+CopyLiterals:
+        ldi
 
-ReadGammaAligned:	; this loop can be unrolled for a very minor increase in decompression speed
-			; (we are talking about +0.2% for +8 bytes, i.e. not really recommended)
+CopyLiteral:
+        ldir
 
-		;DEFINE	UNROLL_ME
-		IFNDEF	UNROLL_ME
-				DUP 2
-				ret c
-				add a : rl c
-				add a
-				EDUP
-				jr nz,ReadGammaAligned
-		ELSE
-				DUP 4
-				ret c
-				add a : rl c
-				add a
-				EDUP
-		ENDIF
+        ; after a literal run you can have either
+        ; 0 + <elias length> = match using a repeated offset, or
+        ; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
+        add     a, a
+        jr      c, UsualMatch
 
-ReloadBits		RELOAD_BITS
+RepMatch:
+        inc     c
+        add     a, a
+        jr      nc, LongerRepMatch
+        jr      nz, CopyMatch1          ; NZ after NC == "confirmed C"
+        
+        ld      a, (hl)                 ; reload bits
+        inc     hl
+        rla
 
-ReadingLongGamma		; this loop does not need unrolling,
-				; as it does not get much use anyway
-				ret c
-				add a : rl c : rl b
-				add a :	jr nz,ReadingLongGamma
+        jr      c, CopyMatch1
 
-			jr ReloadBits
+LongerRepMatch:
+        add     a, a                    ; inline read gamma
+        rl      c
+        add     a, a
+        jr      nc, $-4
 
+        jp      nz, CopyMatch1
+
+        ; this is a crafty equivalent of CALL ReloadReadGamma : JP CopyMatch1
+        push    ix
+
+        ;  the subroutine for reading the remainder of the partly read Elias gamma code.
+        ;  it has two entry points: ReloadReadGamma first refills the bit reservoir in A,
+        ;  while ReadGammaAligned assumes that the bit reservoir has just been refilled.
+ReloadReadGamma:
+        ld      a, (hl)                 ; reload bits
+        inc     hl
+        rla
+
+ReadGammaAligned:
+        ret     c
+        add     a, a
+        rl      c
+        add     a, a
+        ret     c
+        add     a, a
+        rl      c
+        add     a, a
+        jr      nz, ReadGammaAligned
+
+ReloadBits:
+        ld      a, (hl)                 ; reload bits
+        inc     hl
+        rla
+
+ReadingLongGamma:                       ; this loop does not need unrolling, as it does not get much use anyway
+        ret     c
+        add     a, a
+        rl      c
+        rl      b
+        add     a, a
+        jr      nz, ReadingLongGamma
+        jr      ReloadBits
