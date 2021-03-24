@@ -1,20 +1,16 @@
 ;
-;  Speed-optimized ZX0 decompressor by spke (161+ bytes)
+;  Speed-optimized ZX0 decompressor by spke (191 bytes)
 ;
-;  ver.00 by spke (21-25/01/2021, 161+ bytes)
+;  ver.00 by spke (27/01-23/03/2021, 191 bytes)
 ;
 ;  Original ZX0 decompressors were written by Einar Saukas
 ;
 ;  This decompressor was written on the basis of "Standard" decompressor by
-;  Einar Saukas and optimized for speed by spke. Depending on the combination of
-;  compilation options below, it provides the following performance improvements
-;  compared to the standard 249 byte "Mega" decompressor:
-;
-;  				AllowUsingIX-		AllowUsingIX+
-;  AllowSelfmodifyingCode-	161 bytes, 7% faster	167 bytes, 8% faster
-;  AllowSelfmodifyingCode+	166 bytes, 14% faster	169 bytes, 14% faster
-;
-;  The decompressor only uses AF, AF', BC, DE, HL and, optionally, IX.
+;  Einar Saukas and optimized for speed by spke. This decompressor is
+;  about 5% faster than the "Turbo" decompressor, which is 128 bytes long.
+;  It has about the same speed as the "Mega" decompressor, which occupies 412 bytes.
+;  
+;  The decompressor uses AF, AF', BC, DE, HL and IX and relies upon self-modified code.
 ;
 ;  The decompression is done in the standard way:
 ;
@@ -43,140 +39,140 @@
 ;     misrepresented as being the original software.
 ;  3. This notice may not be removed or altered from any source distribution.
 
-;	DEFINE	AllowSelfmodifyingCode
-;	DEFINE	AllowUsingIX
-
-		MACRO	SLOW_GET_BIT
-			call ReadOneBit
+		MACRO	RELOAD_BITS
+			ld a,(hl) : inc hl : rla
 		ENDM
 
-		MACRO	GET_BIT
-			add a : call z,ReloadByte
+		MACRO	INLINE_READ_GAMMA
+.ReadGammaBits		add a : rl c : add a : jr nc,.ReadGammaBits
 		ENDM
 
-		MACRO	FASTER_GET_BIT
-			add a : jp nz,1f
-				ld a,(hl) : inc hl : rla
-1
-		ENDM
+@DecompressZX0:		ld ix,CopyMatch1
+			ld bc,#FFFF : ld (PrevOffset),bc				; default offset is -1
+			inc bc : ld a,#80 : jr RunOfLiterals				; BC is assumed to contains 0 most of the time
+			
+ShorterOffsets			; 7-bit offsets allow additional optimizations,
+				; based on the facts that C==0 and AF' has C ON!
+				ld (ix+PrevOffset+1-CopyMatch1),#FF			; the top byte of the offset is always #FF
+				exa : ld a,(hl) : inc hl
+				rra : ld (PrevOffset),a					; note that AF' always has flag C ON
 
+			jr nc,LongerMatch
 
-@DecompressZX0:		ld bc,#FFFF					; default offset is -1
-	IFNDEF	AllowSelfmodifyingCode
-		IFDEF	AllowUsingIX
-			ld ix,0 : add ix,sp
-		ENDIF
-			push bc
-	ELSE
-		IFDEF	AllowUsingIX
-			ld ix,CopyMatch
-		ENDIF
-			ld (PrevOffset),bc
-	ENDIF
-			inc bc : inc c					; BC must contain 1 most of the time
-			ld a,#80 : jr RunOfLiterals
+CopyMatch2			; the case of matches with len=2
+				exa : ld c,2
 
-UsualMatch:
-	IFNDEF	AllowSelfmodifyingCode
-		IFDEF	AllowUsingIX
-			ld sp,ix
-		ELSE
-			inc sp : inc sp					; discard last offset
-		ENDIF
-	ENDIF
-			FASTER_GET_BIT : call nc,ReadEliasGamma
-			dec b : ret z					; end-of-data
-
-			exa : xor a : sub c
-			ld c,(hl) : inc hl
-			rra : ld b,a : rr c				; lowest bit is the first bit of gamma code for length
-
-	IFNDEF	AllowSelfmodifyingCode
-        		push bc						; preserve new offset
-	ELSE
-			ld (PrevOffset),bc
-	ENDIF
-			ld bc,2 : jr c,MatchLength2
-				dec c : exa
-				call ReadEliasGamma
-				inc bc : db #FE				; #FE = CP .. (this is the quickest way to skip EXA below)
-MatchLength2		exa
-
-	IFNDEF	AllowSelfmodifyingCode
-CopyMatch		ex (sp),hl					; preserve source, restore offset
-        		push hl						; preserve offset
-			add hl,de
-			ldir : inc c
-			pop hl						; restore offset
-			ex (sp),hl					; preserve offset, restore source
-	ELSE
-CopyMatch		push hl						; preserve source
-PrevOffset		EQU $+1 : ld hl,#FFFF				; restore offset (default offset is -1)
-			add hl,de
-			ldir : inc c
-			pop hl						; restore source
-	ENDIF
+CopyMatch1			; the faster match copying code
+				push hl							; preserve source
+PrevOffset			EQU $+1 : ld hl,#FFFF					; restore offset (default offset is -1)
+				add hl,de						; HL = dest - offset
+				ldir
+				pop hl							; restore source
 
 			; after a match you can have either
 			; 0 + <elias length> = run of literals, or
 			; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
-			add a : jr c,UsualMatch
+AfterMatch1		add a : jr nc,RunOfLiterals
 
-RunOfLiterals:		FASTER_GET_BIT : call nc,ReadEliasGamma
-			ldir : inc c
+UsualMatch:			; this is the case of usual match+offset
+				add a : jr nc,LongerOffets : jr nz,ShorterOffsets	; NZ after NC == "confirmed C"
+					RELOAD_BITS : jr c,ShorterOffsets
+
+LongerOffets			inc c : INLINE_READ_GAMMA				; reading gamma requires C=1
+				call z,ReloadReadGamma
+
+ProcessOffset			exa : xor a : sub c
+				ret z							; end-of-data marker (only checked for longer offsets)
+
+				rra : ld (PrevOffset+1),a
+				ld a,(hl) : inc hl
+				rra : ld (PrevOffset),a
+
+			; lowest bit is the first bit of the gamma code for length
+			jr c,CopyMatch2
+
+				; this wastes 1 t-state for longer matches far away,
+				; but saves 4 t-states for longer nearby (seems to pay off in testing)
+				ld c,b
+LongerMatch			inc c
+				; doing SCF here ensures that AF' has flag C ON and costs
+				; cheaper than doing SCF in the ShortestOffsets branch
+				scf : exa
+
+				INLINE_READ_GAMMA
+				call z,ReloadReadGamma
+				inc bc
+
+CopyMatch3			push hl						; preserve source
+				ld hl,(PrevOffset)				; restore offset
+				add hl,de					; HL = dest - offset
+				; because BC>=3, we can do 2 x LDI safely
+				ldi : ldi : ldir
+				pop hl						; restore source
+
+			; after a match you can have either
+			; 0 + <elias length> = run of literals, or
+			; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
+AfterMatch3		add a : jr c,UsualMatch
+
+RunOfLiterals:			inc c : add a : jr nc,LongerRun : jr nz,CopyLiteral	; NZ after NC == "confirmed C"
+					RELOAD_BITS : jr c,CopyLiteral
+
+LongerRun			INLINE_READ_GAMMA : jr nz,CopyLiterals
+					RELOAD_BITS
+				call nc,ReadGammaAligned
+
+CopyLiterals			ldi
+CopyLiteral			ldir
 
 			; after a literal run you can have either
 			; 0 + <elias length> = match using a repeated offset, or
 			; 1 + <elias offset msb> + [7-bits of offset lsb + 1-bit of length] + <elias length> = another match
 			add a : jr c,UsualMatch
 
-RepMatch:		; flaz NZ after NC is synonymous with "confirmed C"
-			add a : jr nc,LongerRepMatch : jr nz,CopyMatch
-				ld a,(hl) : inc hl : rla
-LongerRepMatch		call nc,ReadEliasGamma
-	IFNDEF	AllowSelfmodifyingCode
-			jp CopyMatch
-	ELSE
-		IFDEF	AllowUsingIX
-			jp (ix)
+RepMatch:			inc c : add a : jr nc,LongerRepMatch : jr nz,CopyMatch1	; NZ after NC == "confirmed C"
+					RELOAD_BITS : jr c,CopyMatch1
+
+LongerRepMatch			INLINE_READ_GAMMA
+				jp nz,CopyMatch1
+
+				; this is a crafty equivalent of
+				; CALL ReloadReadGamma : JP CopyMatch1
+				push ix
+
+;
+;  the subroutine for reading the remainder of the partly read Elias gamma code.
+;  it has two entry points: ReloadReadGamma first refills the bit reservoir in A,
+;  while ReadGammaAligned assumes that the bit reservoir has just been refilled.
+
+ReloadReadGamma:	RELOAD_BITS
+
+ReadGammaAligned:	; this loop can be unrolled for a very minor increase in decompression speed
+			; (we are talking about +0.2% for +8 bytes, i.e. not really recommended)
+
+		;DEFINE	UNROLL_ME
+		IFNDEF	UNROLL_ME
+				DUP 2
+				ret c
+				add a : rl c
+				add a
+				EDUP
+				jr nz,ReadGammaAligned
 		ELSE
-			jp CopyMatch
+				DUP 4
+				ret c
+				add a : rl c
+				add a
+				EDUP
 		ENDIF
-	ENDIF
 
-;
-;  standard elias gamma codes are defined as follows:
-;  1 -> 1, 01x -> 1x, 001xx -> 1xx, etc
-;
-;  this routine is only called when the first bit is already guaranteed
-;  to be zero, while BC is guaranteed to be 1. the partial unrolling ensures
-;  that shorter codes are read using substantially streamlined code paths
+ReloadBits		RELOAD_BITS
 
-ReadEliasGamma:		add a : jr c,EliasCode01
-				FASTER_GET_BIT : jr c,EliasCode001
-					add a : jr c,EliasCode0001
-						GET_BIT : jr c,EliasCode00001
+ReadingLongGamma		; this loop does not need unrolling,
+				; as it does not get much use anyway
+				ret c
+				add a : rl c : rl b
+				add a :	jr nz,ReadingLongGamma
 
-						ld bc,#0800
-.CodeLengthLoop					rr b : rr c
-						SLOW_GET_BIT : jr nc,.CodeLengthLoop
+			jr ReloadBits
 
-.CodeValueLoop					call nc,ReadOneBit : rl c : rl b
-						jr nc,.CodeValueLoop
-						ret
-
-EliasCode00001					add a : rl c
-EliasCode0001				GET_BIT : rl c
-EliasCode001			add a : rl c
-EliasCode01		add a : jr z,ReloadByte1
-			rl c : ret
-
-ReloadByte1		ld a,(hl) : inc hl : rla
-			rl c : ret
-
-
-;
-;  standard routines for reading the bitstream
-
-ReadOneBit:		add a : ret nz
-ReloadByte:		ld a,(hl) : inc hl : rla : ret
