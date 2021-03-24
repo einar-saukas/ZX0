@@ -1,7 +1,7 @@
 ;
 ;  Speed-optimized ZX0 decompressor by spke (191 bytes)
 ;
-;  ver.00 by spke (27/01-23/03/2021, 191 bytes)
+;  ver.00 by spke (27/01-23/03/2021, 193 bytes)
 ;
 ;  Original ZX0 decompressors were written by Einar Saukas
 ;
@@ -40,6 +40,8 @@
 ;  3. This notice may not be removed or altered from any source distribution.
 
 DecompressZX0:
+        scf 
+        ex      af, af'
         ld      ix, CopyMatch1
         ld      bc, $ffff
         ld      (PrevOffset+1), bc      ; default offset is -1
