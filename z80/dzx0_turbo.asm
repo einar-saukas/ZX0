@@ -72,29 +72,32 @@ dzx0t_elias:
         add     a, a
         jr      nc, dzx0t_elias
         ret     nz
-dzx0t_elias_reload:
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
         ret     c
         add     a, a
         rl      c
-        rl      b
         add     a, a
         ret     c
         add     a, a
         rl      c
-        rl      b
         add     a, a
         ret     c
         add     a, a
         rl      c
-        rl      b
         add     a, a
         ret     c
+dzx0t_elias_loop:
         add     a, a
         rl      c
         rl      b
         add     a, a
-        jp      dzx0t_elias_reload
+        jr      nc, dzx0t_elias_loop
+        ret     nz
+        ld      a, (hl)                 ; load another group of 8 bits
+        inc     hl
+        rla
+        jr      nc, dzx0t_elias_loop
+        ret
 ; -----------------------------------------------------------------------------
