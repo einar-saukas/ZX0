@@ -1,7 +1,9 @@
 ;
-;  Speed-optimized ZX0 decompressor by spke (193 bytes)
+;  Speed-optimized ZX0 decompressor by spke (191 bytes)
 ;
-;  ver.00 by spke (27/01-23/03/2021, 193 bytes)
+;  ver.00 by spke (27/01-23/03/2021, 191 bytes)
+;  ver.01 by spke (24/03/2021, 193(+2) bytes - fixed a bug in the initialization)
+;  ver.01patch2 by uniabis (25/03/2021, 191(-2) bytes - fixed a bug with elias over 8bits)
 ;
 ;  Original ZX0 decompressors were written by Einar Saukas
 ;
@@ -230,12 +232,6 @@ ReadGammaAligned:
         add     a, a
         rl      c
         add     a, a
-        jr      nz, ReadGammaAligned
-
-ReloadBits:
-        ld      a, (hl)                 ; reload bits
-        inc     hl
-        rla
 
 ReadingLongGamma:                       ; this loop does not need unrolling, as it does not get much use anyway
         ret     c
@@ -244,4 +240,9 @@ ReadingLongGamma:                       ; this loop does not need unrolling, as 
         rl      b
         add     a, a
         jr      nz, ReadingLongGamma
-        jr      ReloadBits
+
+        ld      a, (hl)                 ; reload bits
+        inc     hl
+        rla
+
+        jr      ReadingLongGamma
