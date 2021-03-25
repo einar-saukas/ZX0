@@ -26,7 +26,8 @@ your requirements for speed and size:
 
 * "Standard" routine: 69 bytes only
 * "Turbo" routine: 128 bytes, about 20% faster
-* "Mega" routine: 412 bytes, about 25% faster
+* "?" routine: 193 bytes, about 25% faster
+* "Mega" routine: 681 bytes, about 28% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
 somewhere in memory. To decompress data, just call the routine specifying the

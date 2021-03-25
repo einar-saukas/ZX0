@@ -1,5 +1,5 @@
 ;
-;  Speed-optimized ZX0 decompressor by spke (191 bytes)
+;  Speed-optimized ZX0 decompressor by spke (193 bytes)
 ;
 ;  ver.00 by spke (27/01-23/03/2021, 193 bytes)
 ;
