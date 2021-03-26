@@ -25,8 +25,8 @@ Afterwards you can choose a decompressor routine in assembly Z80, according to
 your requirements for speed and size:
 
 * "Standard" routine: 69 bytes only
-* "Turbo" routine: 128 bytes, about 20% faster
-* "?" routine: 193 bytes, about 25% faster
+* "Turbo" routine: 128 bytes, about 21% faster
+* "Fast" routine: 191 bytes, about 25% faster
 * "Mega" routine: 681 bytes, about 28% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
@@ -338,8 +338,9 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 ## License
 
 The **ZX0** data compression format and algorithm was designed and implemented
-by **Einar Saukas**. Special thanks to **introspec/spke** for several
-suggestions and improvements!
+by **Einar Saukas**. Special thanks to **introspec/spke** for several 
+suggestions and improvements, and together with **uniabis** for providing the
+"Fast" decompressor!
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
 this is relevant only if you want to modify its source code and/or incorporate
