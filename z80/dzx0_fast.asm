@@ -4,6 +4,7 @@
 ;  ver.00 by spke (27/01-23/03/2021, 191 bytes)
 ;  ver.01 by spke (24/03/2021, 193(+2) bytes - fixed a bug in the initialization)
 ;  ver.01patch2 by uniabis (25/03/2021, 191(-2) bytes - fixed a bug with elias over 8bits)
+;  ver.01patch3 by uniabis (27/03/2021, 191 bytes - a bit faster)
 ;
 ;  Original ZX0 decompressors were written by Einar Saukas
 ;
@@ -53,8 +54,9 @@ DecompressZX0:
 
         ; 7-bit offsets allow additional optimizations, based on the facts that C==0 and AF' has C ON!
 ShorterOffsets:
-        ld      (ix+PrevOffset+2-CopyMatch1), $ff  ; the top byte of the offset is always $FF
         ex      af, af'
+        sbc     a, a
+        ld      (PrevOffset+2), a       ; the top byte of the offset is always $FF
         ld      a, (hl)
         inc     hl
         rra
