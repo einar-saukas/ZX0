@@ -363,7 +363,7 @@ used **ZX0**.
 
 * [Intel 8080](https://gitlab.com/ivagor/dezx0)
 
-* [MOS 6502](https://github.com/bboxy/bitfire/tree/master/bitfire/zx0/6502)
+* [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502)
 
 * [Motorola 6809](https://github.com/dougmasten/zx0-6x09)
 
