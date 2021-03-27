@@ -11,7 +11,7 @@
 ;  This decompressor was written on the basis of "Standard" decompressor by
 ;  Einar Saukas and optimized for speed by spke. This decompressor is
 ;  about 5% faster than the "Turbo" decompressor, which is 128 bytes long.
-;  It has about the same speed as the "Mega" decompressor, which occupies 412 bytes.
+;  It has about the same speed as the 412 bytes version of the "Mega" decompressor.
 ;  
 ;  The decompressor uses AF, AF', BC, DE, HL and IX and relies upon self-modified code.
 ;
