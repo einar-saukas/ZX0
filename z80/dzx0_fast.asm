@@ -4,7 +4,7 @@
 ;  ver.00 by spke (27/01-23/03/2021, 191 bytes)
 ;  ver.01 by spke (24/03/2021, 193(+2) bytes - fixed a bug in the initialization)
 ;  ver.01patch2 by uniabis (25/03/2021, 191(-2) bytes - fixed a bug with elias over 8bits)
-;  ver.01patch3 by uniabis (27/03/2021, 191 bytes - a bit faster)
+;  ver.01patch5 by uniabis (29/03/2021, 191 bytes - a bit faster)
 ;
 ;  Original ZX0 decompressors were written by Einar Saukas
 ;
@@ -136,17 +136,17 @@ LongerMatch:
         jr      nc, $-4
 
         call    z,ReloadReadGamma
-        inc     bc
 
 CopyMatch3:
         push    hl                      ; preserve source
         ld      hl, (PrevOffset+1)      ; restore offset
         add     hl, de                  ; HL = dest - offset
 
-        ; because BC>=3, we can do 2 x LDI safely
-        ldi
+        ; because BC>=3-1, we can do 2 x LDI safely
         ldi
         ldir
+        inc     c
+        ldi
         pop     hl                      ; restore source
 
         ; after a match you can have either
@@ -225,8 +225,8 @@ ReloadReadGamma:
         inc     hl
         rla
 
-ReadGammaAligned:
         ret     c
+ReadGammaAligned:
         add     a, a
         rl      c
         add     a, a
