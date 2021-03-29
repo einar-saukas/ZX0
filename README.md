@@ -365,6 +365,8 @@ used **ZX0**.
 
 * [MOS 6502](https://github.com/bboxy/bitfire/tree/master/bitfire/zx0/6502)
 
+* [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream)
+
 * [Motorola 6809](https://github.com/dougmasten/zx0-6x09)
 
 Tools supporting **ZX0**:
