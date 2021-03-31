@@ -369,6 +369,8 @@ used **ZX0**.
 
 * [Motorola 6809](https://github.com/dougmasten/zx0-6x09)
 
+* [Motorola 68000](https://github.com/emmanuel-marty/unzx0_68000)
+
 Tools supporting **ZX0**:
 
 * [z88dk](http://www.z88dk.org/) - The main C compiler for Z80 machines, that
@@ -384,6 +386,10 @@ for **ZX0**, **ZX1**, and **ZX7**.
 * [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
 assembler, that provides built-in support for **ZX0** and **ZX7**.
 
+* [coco-dev](https://github.com/jamieleecho/coco-dev) - A Docker development
+environment to create Tandy Color Computer applications, that provides
+built-in support for **ZX0**.
+
 * [ConvImgCpc](https://github.com/DemoniakLudo/ConvImgCpc) - An image
 conversion utility for Amstrad CPC, that provides built-in support 
 for **ZX0** and **ZX1**.
@@ -395,7 +401,7 @@ for Commodore 64, that stores all compressed data using a modified version
 of **ZX0**.
 
 * [NSID_Emu](https://spectrumcomputing.co.uk/forums/viewtopic.php?f=8&t=2786) -
-The SID Player for ZX Spectrum stores all compressed data using **ZX0**.
+A SID Player for ZX Spectrum that stores all compressed data using **ZX0**.
 
 * [ZX Interface 2 Cartridges](http://www.fruitcake.plus.com/Sinclair/Interface2/Cartridges/Interface2_RC_New_3rdParty_GameConversions.htm) -
 Several ZX Interface 2 conversions were created using either **ZX0** or **ZX7**
