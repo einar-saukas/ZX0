@@ -357,11 +357,11 @@ used **ZX0**.
 
 **ZX0** ported to other platforms:
 
-* [DEC PDP11](https://gitlab.com/ivagor/dezx0)
+* [DEC PDP11](https://github.com/ivagorRetrocomp/DeZX)
 
 * [Hitachi 6309](https://github.com/dougmasten/zx0-6x09)
 
-* [Intel 8080](https://gitlab.com/ivagor/dezx0)
+* [Intel 8080](https://github.com/ivagorRetrocomp/DeZX)
 
 * [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502)
 
@@ -374,7 +374,7 @@ used **ZX0**.
 Tools supporting **ZX0**:
 
 * [z88dk](http://www.z88dk.org/) - The main C compiler for Z80 machines, that
-provides built-in support for **ZX0** and **ZX7**.
+provides built-in support for **ZX0**, **ZX1**, **ZX2**, and **ZX7**.
 
 * [ZX Basic](https://zxbasic.readthedocs.io/) - The main BASIC compiler for
 Z80 machines, that provides built-in support for **ZX0**.
