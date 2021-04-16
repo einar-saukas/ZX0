@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas & introspec
-; "Turbo" version (128 bytes, 21% faster)
+; "Turbo" version (124 bytes, 21% faster)
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -16,7 +16,7 @@ dzx0_turbo:
 dzx0t_new_offset:
         inc     c                       ; obtain offset MSB
         add     a, a
-        jp      nz, dzx0t_new_offset_skip
+        jr      nz, dzx0t_new_offset_skip
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -48,7 +48,7 @@ dzx0t_last_offset:
 dzx0t_literals:
         inc     c                       ; obtain length
         add     a, a
-        jp      nz, dzx0t_literals_skip
+        jr      nz, dzx0t_literals_skip
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
@@ -59,13 +59,13 @@ dzx0t_literals_skip:
         jr      c, dzx0t_new_offset
         inc     c                       ; obtain length
         add     a, a
-        jp      nz, dzx0t_last_offset_skip
+        jr      nz, dzx0t_last_offset_skip
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
 dzx0t_last_offset_skip:
         call    nc, dzx0t_elias
-        jp      dzx0t_copy
+        jr      dzx0t_copy
 dzx0t_elias:
         add     a, a                    ; interlaced Elias gamma coding
         rl      c
