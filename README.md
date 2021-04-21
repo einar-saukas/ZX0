@@ -363,6 +363,8 @@ used **ZX0**.
 
 * [Intel 8080](https://github.com/ivagorRetrocomp/DeZX)
 
+* [Intel 8088/x86](https://github.com/emmanuel-marty/unzx0_x86)
+
 * [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502)
 
 * [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream)
