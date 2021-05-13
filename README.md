@@ -303,13 +303,13 @@ each level using "generic.gfx" as a 1024 bytes suffix, use the command-line
 compressor as follows:
 
 ```
-copy /b "level_1.gfx+generic.gfx level_1_suffixed.gfx
+copy /b level_1.gfx+generic.gfx level_1_suffixed.gfx
 zx0 -b +1024 level_1_suffixed.gfx
 
-copy /b "level_2.gfx+generic.gfx level_2_suffixed.gfx
+copy /b level_2.gfx+generic.gfx level_2_suffixed.gfx
 zx0 -b +1024 level_2_suffixed.gfx
 
-copy /b "level_3.gfx+generic.gfx level_3_suffixed.gfx
+copy /b level_3.gfx+generic.gfx level_3_suffixed.gfx
 zx0 -b +1024 level_3_suffixed.gfx
 ```
 
@@ -381,19 +381,22 @@ provides built-in support for **ZX0**, **ZX1**, **ZX2**, and **ZX7**.
 * [ZX Basic](https://zxbasic.readthedocs.io/) - The main BASIC compiler for
 Z80 machines, that provides built-in support for **ZX0**.
 
-* [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
-create MSX videogame cartridges, that provides built-in support
-for **ZX0**, **ZX1**, and **ZX7**.
+* [Mad-Pascal](https://github.com/tebe6502/Mad-Pascal) - The 32-bit Turbo
+Pascal compiler for Atari XE/XL, that provides built-in support for **ZX0**.
 
 * [RASM Assembler](https://github.com/EdouardBERGE/rasm/) - A very fast Z80
 assembler, that provides built-in support for **ZX0** and **ZX7**.
+
+* [MSXlib](https://github.com/theNestruo/msx-msxlib) - A set of libraries to
+create MSX videogame cartridges, that provides built-in support
+for **ZX0**, **ZX1**, and **ZX7**.
 
 * [coco-dev](https://github.com/jamieleecho/coco-dev) - A Docker development
 environment to create Tandy Color Computer applications, that provides
 built-in support for **ZX0**.
 
 * [ConvImgCpc](https://github.com/DemoniakLudo/ConvImgCpc) - An image
-conversion utility for Amstrad CPC, that provides built-in support 
+conversion utility for Amstrad CPC, that provides built-in support
 for **ZX0** and **ZX1**.
 
 Projects using **ZX0**:
