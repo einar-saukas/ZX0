@@ -419,6 +419,10 @@ for the GX-4000, that stores all compressed data using **ZX0**.
 A remake of Rodland for the Amstrad, that stores all compressed data
 using **ZX0**.
 
+* [Joust](http://www.lcurtisboyle.com/nitros9/joust.html) - A transcode of
+the official Williams Joust game from the arcades for the Tandy Color Computer 3,
+that stores all compressed data using **ZX0** to fit on one 160K floppy disk.
+
 Related projects (by the same author):
 
 * [RCS](https://github.com/einar-saukas/RCS) - Use **ZX0** and **RCS** together
