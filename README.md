@@ -338,9 +338,10 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 ## License
 
 The **ZX0** data compression format and algorithm was designed and implemented
-by **Einar Saukas**. Special thanks to **introspec/spke** for several 
+by **Einar Saukas**. Special thanks to **introspec/spke** for several
 suggestions and improvements, and together with **uniabis** for providing the
-"Fast" decompressor!
+"Fast" decompressor. Also thanks to **Urusergi** for minor improvements in
+backwards decompressors.
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
 this is relevant only if you want to modify its source code and/or incorporate
@@ -395,8 +396,12 @@ for **ZX0**, **ZX1**, and **ZX7**.
 environment to create Tandy Color Computer applications, that provides
 built-in support for **ZX0**.
 
+* [Gfx2Next](https://github.com/headkaze/Gfx2Next) - A graphics conversion 
+utility for ZX Spectrum Next development, that provides built-in support
+for **ZX0**.
+
 * [ConvImgCpc](https://github.com/DemoniakLudo/ConvImgCpc) - An image
-conversion utility for Amstrad CPC, that provides built-in support
+conversion utility for Amstrad CPC development, that provides built-in support
 for **ZX0** and **ZX1**.
 
 Projects using **ZX0**:
@@ -412,16 +417,16 @@ A SID Player for ZX Spectrum that stores all compressed data using **ZX0**.
 Several ZX Interface 2 conversions were created using either **ZX0** or **ZX7**
 so a full game could fit into a small 16K cartridge.
 
-* [Sonic GX](http://norecess.cpcscene.net/) - A remake of Sonic the Hedgehog
-for the GX-4000, that stores all compressed data using **ZX0**.
+* [Joust CoCo 3](http://www.lcurtisboyle.com/nitros9/joust.html) - A port of
+arcade game Joust for the Tandy Color Computer 3, that stores all compressed
+data using **ZX0** to fit on a single 160K floppy disk.
+
+* [Sonic GX](http://norecess.cpcscene.net/) - A remake of video game Sonic the 
+Hedgehog for the GX-4000, that stores all compressed data using **ZX0**.
 
 * [Rit and Tam](http://www.indieretronews.com/2021/02/rit-and-tam-arcade-classic-rodland-is.html) -
-A remake of Rodland for the Amstrad, that stores all compressed data
-using **ZX0**.
-
-* [Joust](http://www.lcurtisboyle.com/nitros9/joust.html) - A transcode of
-the official Williams Joust game from the arcades for the Tandy Color Computer 3,
-that stores all compressed data using **ZX0** to fit on one 160K floppy disk.
+A remake of platform game Rodland for the Amstrad, that stores all compressed
+data using **ZX0**.
 
 Related projects (by the same author):
 
