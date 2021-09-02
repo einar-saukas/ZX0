@@ -46,6 +46,10 @@ dzx0sb_new_offset:
         call    c, dzx0sb_elias_backtrack
         inc     bc
         jr      dzx0sb_copy
+dzx0sb_elias_backtrack:
+        add     a, a
+        rl      c
+        rl      b
 dzx0sb_elias:
         add     a, a                    ; inverted interlaced Elias gamma coding
         jr      nz, dzx0sb_elias_skip
@@ -53,10 +57,6 @@ dzx0sb_elias:
         dec     hl
         rla
 dzx0sb_elias_skip:
-        ret     nc
-dzx0sb_elias_backtrack:
-        add     a, a
-        rl      c
-        rl      b
-        jr      dzx0sb_elias
+        jr      c, dzx0sb_elias_backtrack
+        ret
 ; -----------------------------------------------------------------------------

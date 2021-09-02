@@ -340,7 +340,7 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 The **ZX0** data compression format and algorithm was designed and implemented
 by **Einar Saukas**. Special thanks to **introspec/spke** for several
 suggestions and improvements, and together with **uniabis** for providing the
-"Fast" decompressor. Also thanks to **Urusergi** for minor improvements in
+"Fast" decompressor. Also thanks to **Urusergi** for further improvements in 
 backwards decompressors.
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
