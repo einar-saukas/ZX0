@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas & introspec
-; "Turbo" version (126 bytes, 21% faster)
+; "Turbo" version (128 bytes, 21% faster) - OLD FILE FORMAT v1
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -14,17 +14,20 @@ dzx0_turbo:
         ld      a, $80
         jr      dzx0t_literals
 dzx0t_new_offset:
-        ld      c, $fe                  ; prepare negative offset
+        inc     c                       ; obtain offset MSB
         add     a, a
         jp      nz, dzx0t_new_offset_skip
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         rla
 dzx0t_new_offset_skip:
-        call    nc, dzx0t_elias         ; obtain offset MSB
-        inc     c
+        call    nc, dzx0t_elias
+        ex      af, af'                 ; adjust for negative offset
+        xor     a
+        sub     c
         ret     z                       ; check end marker
-        ld      b, c
+        ld      b, a
+        ex      af, af'
         ld      c, (hl)                 ; obtain offset LSB
         inc     hl
         rr      b                       ; last offset bit becomes first length bit

@@ -57,8 +57,8 @@ int read_bit() {
     return bit_value & bit_mask ? 1 : 0;
 }
 
-int read_interlaced_elias_gamma() {
-    int value = 1;
+int read_interlaced_elias_gamma(int initial) {
+    int value = initial;
     while (!read_bit()) {
         value = value << 1 | read_bit();
     }
@@ -96,7 +96,7 @@ void write_bytes(int offset, int length) {
     }
 }
 
-void decompress() {
+void decompress(int classic_mode) {
     int length;
     int i;
 
@@ -117,7 +117,7 @@ void decompress() {
     last_offset = INITIAL_OFFSET;
 
 COPY_LITERALS:
-    length = read_interlaced_elias_gamma();
+    length = read_interlaced_elias_gamma(1);
     for (i = 0; i < length; i++) {
         write_byte(read_byte());
     }
@@ -126,14 +126,14 @@ COPY_LITERALS:
     }
 
 /*COPY_FROM_LAST_OFFSET:*/
-    length = read_interlaced_elias_gamma();
+    length = read_interlaced_elias_gamma(1);
     write_bytes(last_offset, length);
     if (!read_bit()) {
         goto COPY_LITERALS;
     }
 
 COPY_FROM_NEW_OFFSET:
-    last_offset = read_interlaced_elias_gamma();
+    last_offset = classic_mode ? read_interlaced_elias_gamma(1) : (read_interlaced_elias_gamma(254)&255)+1;
     if (last_offset == 256) {
         save_output();
         if (input_index != partial_counter) {
@@ -142,9 +142,9 @@ COPY_FROM_NEW_OFFSET:
         }
         return;
     }
-    last_offset = ((last_offset-1)<<7)+128-(read_byte()>>1);
+    last_offset = ((classic_mode ? last_offset-1 : 255-last_offset)<<7)+128-(read_byte()>>1);
     backtrack = TRUE;
-    length = read_interlaced_elias_gamma()+1;
+    length = read_interlaced_elias_gamma(1)+1;
     write_bytes(last_offset, length);
     if (read_bit()) {
         goto COPY_FROM_NEW_OFFSET;
@@ -155,14 +155,17 @@ COPY_FROM_NEW_OFFSET:
 
 int main(int argc, char *argv[]) {
     int forced_mode = FALSE;
+    int classic_mode = FALSE;
     int i;
 
-    printf("DZX0 v1.5: Data decompressor by Einar Saukas\n");
+    printf("DZX0 v2.0: Data decompressor by Einar Saukas\n");
 
     /* process hidden optional parameters */
     for (i = 1; i < argc && *argv[i] == '-'; i++) {
         if (!strcmp(argv[i], "-f")) {
             forced_mode = TRUE;
+        } else if (!strcmp(argv[i], "-c")) {
+            classic_mode = TRUE;
         } else {
             fprintf(stderr, "Error: Invalid parameter %s\n", argv[i]);
             exit(1);
@@ -186,8 +189,9 @@ int main(int argc, char *argv[]) {
         input_name = argv[i];
         output_name = argv[i+1];
     } else {
-        fprintf(stderr, "Usage: %s [-f] input.zx0 [output]\n"
-                        "  -f      Force overwrite of output file\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-f] [-c] input.zx0 [output]\n"
+                        "  -f      Force overwrite of output file\n"
+                        "  -c      Classic file format (v1.*)\n", argv[0]);
         exit(1);
     }
 
@@ -212,7 +216,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* generate output file */
-    decompress();
+    decompress(classic_mode);
 
     /* close input file */
     fclose(ifp);

@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ; ZX0 decoder by Einar Saukas
-; "Mega" version (673 bytes, 28% faster)
+; "Mega" version (681 bytes, 28% faster) - OLD FILE FORMAT v1
 ; -----------------------------------------------------------------------------
 ; Parameters:
 ;   HL: source address (compressed data)
@@ -14,7 +14,7 @@ dzx0_mega:
         jr      dzx0m_literals0
 
 dzx0m_new_offset6:
-        ld      c, $fe                  ; prepare negative offset
+        inc     c
         add     a, a                    ; obtain offset MSB
         jp      c, dzx0m_new_offset5
         add     a, a
@@ -34,9 +34,12 @@ dzx0m_elias_offset1:
         add     a, a
         jp      nc, dzx0m_elias_offset7
 dzx0m_new_offset7:
-        inc     c
+        ex      af, af'                 ; adjust for negative offset
+        xor     a
+        sub     c
         ret     z                       ; check end marker
-        ld      b, c
+        ld      b, a
+        ex      af, af'
         ld      c, (hl)                 ; obtain offset LSB
         inc     hl
         rr      b                       ; last offset bit becomes first length bit
@@ -121,7 +124,7 @@ dzx0m_reuse1:
         jr      nc, dzx0m_literals0
 
 dzx0m_new_offset0:
-        ld      c, $fe                  ; prepare negative offset
+        inc     c
         ld      a, (hl)                 ; load another group of 8 bits
         inc     hl
         add     a, a                    ; obtain offset MSB
@@ -141,9 +144,12 @@ dzx0m_elias_offset3:
         add     a, a
         jp      nc, dzx0m_elias_offset1
 dzx0m_new_offset1:
-        inc     c
+        ex      af, af'                 ; adjust for negative offset
+        xor     a
+        sub     c
         ret     z                       ; check end marker
-        ld      b, c
+        ld      b, a
+        ex      af, af'
         ld      c, (hl)                 ; obtain offset LSB
         inc     hl
         rr      b                       ; last offset bit becomes first length bit
@@ -230,7 +236,7 @@ dzx0m_reuse3:
         jr      nc, dzx0m_literals2
 
 dzx0m_new_offset2:
-        ld      c, $fe                  ; prepare negative offset
+        inc     c
         add     a, a                    ; obtain offset MSB
         jp      c, dzx0m_new_offset1
         add     a, a
@@ -250,9 +256,12 @@ dzx0m_elias_offset5:
         add     a, a
         jp      nc, dzx0m_elias_offset3
 dzx0m_new_offset3:
-        inc     c
+        ex      af, af'                 ; adjust for negative offset
+        xor     a
+        sub     c
         ret     z                       ; check end marker
-        ld      b, c
+        ld      b, a
+        ex      af, af'
         ld      c, (hl)                 ; obtain offset LSB
         inc     hl
         rr      b                       ; last offset bit becomes first length bit
@@ -339,7 +348,7 @@ dzx0m_reuse5:
         jr      nc, dzx0m_literals4
 
 dzx0m_new_offset4:
-        ld      c, $fe                  ; prepare negative offset
+        inc     c
         add     a, a                    ; obtain offset MSB
         jp      c, dzx0m_new_offset3
         add     a, a
@@ -359,9 +368,12 @@ dzx0m_elias_offset7:
         add     a, a
         jp      nc, dzx0m_elias_offset5
 dzx0m_new_offset5:
-        inc     c
+        ex      af, af'                 ; adjust for negative offset
+        xor     a
+        sub     c
         ret     z                       ; check end marker
-        ld      b, c
+        ld      b, a
+        ex      af, af'
         ld      c, (hl)                 ; obtain offset LSB
         inc     hl
         rr      b                       ; last offset bit becomes first length bit

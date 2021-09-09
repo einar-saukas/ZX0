@@ -11,6 +11,12 @@ A comparison with other compressors (courtesy of **introspec/spke**) can be seen
 [here](https://www.cpcwiki.eu/forum/programming/new-cruncher-zx0/msg197727/#msg197727).
 
 
+_**WARNING**: The ZX0 file format was changed in version 2. This new format allows
+decompressors to be slightly smaller and run slightly faster. If you need to compress
+a file to the old "classic" file format from version 1, then execute ZX0 compressor
+using parameter "-c"._
+
+
 ## Usage
 
 To compress a file, use the command-line compressor as follows:
@@ -24,10 +30,10 @@ This will generate a compressed file called "Cobra.scr.zx0".
 Afterwards you can choose a decompressor routine in assembly Z80, according to
 your requirements for speed and size:
 
-* "Standard" routine: 69 bytes only
-* "Turbo" routine: 128 bytes, about 21% faster
+* "Standard" routine: 68 bytes only
+* "Turbo" routine: 126 bytes, about 21% faster
 * "Fast" routine: 191 bytes, about 25% faster
-* "Mega" routine: 681 bytes, about 28% faster
+* "Mega" routine: 673 bytes, about 28% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
 somewhere in memory. To decompress data, just call the routine specifying the
@@ -85,9 +91,8 @@ Fortunately all complexity lies on the compression process only. The **ZX0**
 compression format itself is very simple and efficient, providing a high
 compression ratio that can be decompressed quickly and easily. The provided
 **ZX0** decompressor routines in assembly Z80 are small and fast, they only use
-main registers BC, DE, HL, A and optionally alternate register A' (use the 
-backwards variant to avoid using A'), consume very little stack space and does
-not require additional decompression buffer.
+main registers (BC, DE, HL, AF), consume very little stack space, and do not
+require additional decompression buffer.
 
 The provided **ZX0** decompressor in C writes the output file while reading the
 compressed file, without keeping it in memory. Therefore it always use the same
@@ -340,8 +345,8 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 The **ZX0** data compression format and algorithm was designed and implemented
 by **Einar Saukas**. Special thanks to **introspec/spke** for several
 suggestions and improvements, and together with **uniabis** for providing the
-"Fast" decompressor. Also thanks to **Urusergi** for further improvements in 
-backwards decompressors.
+"Fast" decompressor. Also special thanks to **Urusergi** for additional
+improvements.
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
 this is relevant only if you want to modify its source code and/or incorporate

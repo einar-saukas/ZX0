@@ -1,5 +1,5 @@
 ;
-;  Speed-optimized ZX0 decompressor by spke (191 bytes)
+;  Speed-optimized ZX0 decompressor by spke (191 bytes) - OLD FILE FORMAT v1
 ;
 ;  ver.00 by spke (27/01-23/03/2021, 191 bytes)
 ;  ver.01 by spke (24/03/2021, 193(+2) bytes - fixed a bug in the initialization)

@@ -44,4 +44,4 @@ void assign(BLOCK **ptr, BLOCK *chain);
 
 BLOCK *optimize(unsigned char *input_data, int input_size, int skip, int offset_limit);
 
-unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_size, int skip, int backwards_mode, int *output_size, int *delta);
+unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_size, int skip, int backwards_mode, int invert_mode, int *output_size, int *delta);
