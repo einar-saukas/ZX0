@@ -34,11 +34,10 @@ typedef struct block_t {
     int bits;
     int index;
     int offset;
-    int length;
     int references;
 } BLOCK;
 
-BLOCK *allocate(int bits, int index, int offset, int length, BLOCK *chain);
+BLOCK *allocate(int bits, int index, int offset, BLOCK *chain);
 
 void assign(BLOCK **ptr, BLOCK *chain);
 

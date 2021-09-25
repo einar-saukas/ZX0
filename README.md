@@ -363,21 +363,21 @@ used **ZX0**.
 
 **ZX0** ported to other platforms:
 
-* [DEC PDP11](https://github.com/ivagorRetrocomp/DeZX) _(older "classic" file format v1)_
+* [DEC PDP11](https://github.com/ivagorRetrocomp/DeZX) _("classic" file format v1)_
 
-* [Hitachi 6309](https://github.com/dougmasten/zx0-6x09) _(older "classic" file format v1)_
+* [Hitachi 6309](https://github.com/dougmasten/zx0-6x09) _("classic" file format v1)_
 
-* [Intel 8080](https://github.com/ivagorRetrocomp/DeZX) _(older "classic" file format v1)_
+* [Intel 8080](https://github.com/ivagorRetrocomp/DeZX) _("classic" file format v1)_
 
-* [Intel 8088/x86](https://github.com/emmanuel-marty/unzx0_x86) _(older "classic" file format v1)_
+* [Intel 8088/x86](https://github.com/emmanuel-marty/unzx0_x86) _("classic" file format v1)_
 
-* [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502) _(older "classic" file format v1)_
+* [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502) _("classic" file format v1)_
 
-* [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream) - _(older "classic" file format v1)_
+* [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream) - _("classic" file format v1)_
 
-* [Motorola 6809](https://github.com/dougmasten/zx0-6x09) _(older "classic" file format v1)_
+* [Motorola 6809](https://github.com/dougmasten/zx0-6x09) _("classic" file format v1)_
 
-* [Motorola 68000](https://github.com/emmanuel-marty/unzx0_68000) _(older "classic" file format v1)_
+* [Motorola 68000](https://github.com/emmanuel-marty/unzx0_68000) _("classic" file format v1)_
 
 Tools supporting **ZX0**:
 
@@ -432,6 +432,9 @@ Hedgehog for the GX-4000, that stores all compressed data using **ZX0**.
 * [Rit and Tam](http://www.indieretronews.com/2021/02/rit-and-tam-arcade-classic-rodland-is.html) -
 A remake of platform game Rodland for the Amstrad, that stores all compressed
 data using **ZX0**.
+
+* [others](https://spectrumcomputing.co.uk/entry/36245/ZX-Spectrum/ZX0) -
+A list of Sinclair-related programs using **ZX0** is available at **Spectrum Computing**.
 
 Related projects (by the same author):
 
