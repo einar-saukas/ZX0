@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
     int classic_mode = FALSE;
     int i;
 
-    printf("DZX0 v2.0: Data decompressor by Einar Saukas\n");
+    printf("DZX0 v2.1: Data decompressor by Einar Saukas\n");
 
     /* process hidden optional parameters */
     for (i = 1; i < argc && *argv[i] == '-'; i++) {
