@@ -119,7 +119,7 @@ The **ZX0** compressed format is very simple. There are only 3 types of blocks:
 
 * Copy from new offset (repeat N bytes from new offset)
 ```
-    1  Elias(MSB(offset))  LSB(offset)  Elias(length-1)
+    1  Elias(MSB(offset)+1)  LSB(offset)  Elias(length-1)
 ```
 
 **ZX0** needs only 1 bit to distinguish between these blocks, because literal
