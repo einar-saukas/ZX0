@@ -30,18 +30,14 @@
 
 #define MAX_SCALE 50
 
-#define minimum(a,b) (a < b ? a : b)
-
 int offset_ceiling(int index, int offset_limit) {
     return index > offset_limit ? offset_limit : index < INITIAL_OFFSET ? INITIAL_OFFSET : index;
 }
 
 int elias_gamma_bits(int value) {
     int bits = 1;
-    while (value > 1) {
+    while (value >>= 1)
         bits += 2;
-        value >>= 1;
-    }
     return bits;
 }
 

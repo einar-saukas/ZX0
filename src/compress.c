@@ -71,7 +71,7 @@ void write_interlaced_elias_gamma(int value, int backwards_mode, int invert_mode
     for (i = 2; i <= value; i <<= 1)
         ;
     i >>= 1;
-    while ((i >>= 1) > 0) {
+    while (i >>= 1) {
         write_bit(backwards_mode);
         write_bit(invert_mode ? !(value & i) : (value & i));
     }
