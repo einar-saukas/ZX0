@@ -415,6 +415,11 @@ Projects using **ZX0**:
 for Commodore 64, that stores all compressed data using a modified version
 of **ZX0**.
 
+* [Defender CoCo 3](http://www.lcurtisboyle.com/nitros9/defender.html) - A
+conversion of the official Williams Defender game from the arcades for the
+Tandy Color Computer 3 that stores all compressed data using **ZX0** to fit
+on two 160K floppy disks.
+
 * [NSID_Emu](https://spectrumcomputing.co.uk/forums/viewtopic.php?f=8&t=2786) -
 A SID Player for ZX Spectrum that stores all compressed data using **ZX0**.
 
