@@ -28,7 +28,6 @@ int bit_mask;
 int bit_value;
 int backtrack;
 int last_byte;
-int last_offset;
 
 int read_byte() {
     if (input_index == partial_counter) {
@@ -57,10 +56,10 @@ int read_bit() {
     return bit_value & bit_mask ? 1 : 0;
 }
 
-int read_interlaced_elias_gamma(int initial) {
-    int value = initial;
+int read_interlaced_elias_gamma(int inverted) {
+    int value = 1;
     while (!read_bit()) {
-        value = value << 1 | read_bit();
+        value = value << 1 | read_bit() ^ inverted;
     }
     return value;
 }
@@ -97,6 +96,7 @@ void write_bytes(int offset, int length) {
 }
 
 void decompress(int classic_mode) {
+    int last_offset = INITIAL_OFFSET;
     int length;
     int i;
 
@@ -114,26 +114,22 @@ void decompress(int classic_mode) {
     output_size = 0;
     bit_mask = 0;
     backtrack = FALSE;
-    last_offset = INITIAL_OFFSET;
 
 COPY_LITERALS:
-    length = read_interlaced_elias_gamma(1);
-    for (i = 0; i < length; i++) {
+    length = read_interlaced_elias_gamma(FALSE);
+    for (i = 0; i < length; i++)
         write_byte(read_byte());
-    }
-    if (read_bit()) {
+    if (read_bit())
         goto COPY_FROM_NEW_OFFSET;
-    }
 
 /*COPY_FROM_LAST_OFFSET:*/
-    length = read_interlaced_elias_gamma(1);
+    length = read_interlaced_elias_gamma(FALSE);
     write_bytes(last_offset, length);
-    if (!read_bit()) {
+    if (!read_bit())
         goto COPY_LITERALS;
-    }
 
 COPY_FROM_NEW_OFFSET:
-    last_offset = classic_mode ? read_interlaced_elias_gamma(1) : (read_interlaced_elias_gamma(254)&255)+1;
+    last_offset = read_interlaced_elias_gamma(!classic_mode);
     if (last_offset == 256) {
         save_output();
         if (input_index != partial_counter) {
@@ -142,15 +138,14 @@ COPY_FROM_NEW_OFFSET:
         }
         return;
     }
-    last_offset = ((classic_mode ? last_offset-1 : 255-last_offset)<<7)+128-(read_byte()>>1);
+    last_offset = last_offset*128-(read_byte()>>1);
     backtrack = TRUE;
-    length = read_interlaced_elias_gamma(1)+1;
+    length = read_interlaced_elias_gamma(FALSE)+1;
     write_bytes(last_offset, length);
-    if (read_bit()) {
+    if (read_bit())
         goto COPY_FROM_NEW_OFFSET;
-    } else {
+    else
         goto COPY_LITERALS;
-    }
 }
 
 int main(int argc, char *argv[]) {

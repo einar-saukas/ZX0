@@ -361,6 +361,11 @@ used **ZX0**.
 
 ## Links
 
+**ZX0** available on other programming languages:
+
+* [ZX0-Kotlin](https://github.com/einar-saukas/ZX0-Kotlin) - Faster 
+multi-thread **ZX0** data compressor in Kotlin.
+
 **ZX0** ported to other platforms:
 
 * [DEC PDP11](https://github.com/ivagorRetrocomp/DeZX) _("classic" file format v1)_
@@ -369,15 +374,15 @@ used **ZX0**.
 
 * [Intel 8080](https://github.com/ivagorRetrocomp/DeZX) _("classic" file format v1)_
 
-* [Intel 8088/x86](https://github.com/emmanuel-marty/unzx0_x86) _("classic" file format v1)_
+* [Intel 8088/x86](https://github.com/emmanuel-marty/unzx0_x86) _(all formats)_
 
 * [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502) _("classic" file format v1)_
 
-* [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream) - _("classic" file format v1)_
+* [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream) - _(all formats)_
 
 * [Motorola 6809](https://github.com/dougmasten/zx0-6x09) _("classic" file format v1)_
 
-* [Motorola 68000](https://github.com/emmanuel-marty/unzx0_68000) _("classic" file format v1)_
+* [Motorola 68000](https://github.com/emmanuel-marty/unzx0_68000) _(all formats)_
 
 Tools supporting **ZX0**:
 
@@ -453,6 +458,9 @@ of **ZX0**, that sacrifices about 1.5% compression to run about 15% faster.
 
 * [ZX2](https://github.com/einar-saukas/ZX2) - A minimalist version of **ZX1**,
 intended for compressing very small files.
+
+* [ZX5](https://github.com/einar-saukas/ZX5) - An experimental, more complex 
+compressor based on **ZX0**.
 
 * [ZX7](https://spectrumcomputing.co.uk/entry/27996/ZX-Spectrum/ZX7) - A widely
 popular predecessor compressor (now superseded by **ZX0**).

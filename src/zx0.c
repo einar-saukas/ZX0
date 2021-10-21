@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
     printf("ZX0 v2.1: Optimal data compressor by Einar Saukas\n");
 
-    /* process hidden optional parameters */
+    /* process optional parameters */
     for (i = 1; i < argc && (*argv[i] == '-' || *argv[i] == '+'); i++) {
         if (!strcmp(argv[i], "-f")) {
             forced_mode = TRUE;
