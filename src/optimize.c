@@ -63,8 +63,8 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
     match_length = (int *)calloc(max_offset+1, sizeof(int));
     best_length = (int *)malloc(input_size*sizeof(int));
     if (!last_literal || !last_match || !optimal || !match_length || !best_length) {
-         fprintf(stderr, "Error: Insufficient memory\n");
-         exit(1);
+        fprintf(stderr, "Error: Insufficient memory\n");
+        exit(1);
     }
     best_length[2] = 2;
 

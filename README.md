@@ -345,8 +345,8 @@ Also if you are using "in-place" decompression, you must leave a small margin of
 The **ZX0** data compression format and algorithm was designed and implemented
 by **Einar Saukas**. Special thanks to **introspec/spke** for several
 suggestions and improvements, and together with **uniabis** for providing the
-"Fast" decompressor. Also special thanks to **Urusergi** for additional
-improvements.
+"Fast" decompressor. Also special thanks to **Urusergi** for additional ideas
+and improvements.
 
 The optimal C compressor is available under the "BSD-3" license. In practice,
 this is relevant only if you want to modify its source code and/or incorporate
@@ -361,10 +361,13 @@ used **ZX0**.
 
 ## Links
 
-**ZX0** available on other programming languages:
+**ZX0** implemented in other programming languages:
 
-* [ZX0-Kotlin](https://github.com/einar-saukas/ZX0-Kotlin) - Faster 
-multi-thread **ZX0** data compressor in Kotlin.
+* [ZX0-Java](https://github.com/einar-saukas/ZX0-Java) - Faster
+multi-thread data compressor for **ZX0** in [Java](https://www.java.com/).
+
+* [ZX0-Kotlin](https://github.com/einar-saukas/ZX0-Kotlin) - Faster
+multi-thread data compressor for **ZX0** in [Kotlin](https://kotlinlang.org/).
 
 **ZX0** ported to other platforms:
 
