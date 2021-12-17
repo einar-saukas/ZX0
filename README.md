@@ -369,6 +369,9 @@ multi-thread data compressor for **ZX0** in [Java](https://www.java.com/).
 * [ZX0-Kotlin](https://github.com/einar-saukas/ZX0-Kotlin) - Faster
 multi-thread data compressor for **ZX0** in [Kotlin](https://kotlinlang.org/).
 
+* [Salvador](https://github.com/emmanuel-marty/salvador) - A non-optimal but
+much faster data compressor for **ZX0** in C.
+
 **ZX0** ported to other platforms:
 
 * [DEC PDP11](https://github.com/ivagorRetrocomp/DeZX) _("classic" file format v1)_
@@ -379,7 +382,7 @@ multi-thread data compressor for **ZX0** in [Kotlin](https://kotlinlang.org/).
 
 * [Intel 8088/x86](https://github.com/emmanuel-marty/unzx0_x86) _(all formats)_
 
-* [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502) _("classic" file format v1)_
+* [MOS 6502](https://github.com/bboxy/bitfire/tree/master/packer/zx0/6502) _(all formats)_
 
 * [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream) - _(all formats)_
 
@@ -416,6 +419,10 @@ for **ZX0**.
 * [ConvImgCpc](https://github.com/DemoniakLudo/ConvImgCpc) - An image
 conversion utility for Amstrad CPC development, that provides built-in support
 for **ZX0** and **ZX1**.
+
+* [Vortex2_Player_SJASM](https://github.com/andydansby/Vortex2_Player_SJASM_ver2_compress) -
+A packaging utility to compile Vortex 2 music for a ZX Spectrum, that compresses 
+songs using **ZX0**.
 
 Projects using **ZX0**:
 
