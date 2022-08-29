@@ -386,6 +386,8 @@ much faster data compressor for **ZX0** in C.
 
 * [MOS 6502](https://xxl.atari.pl/zx0-decompressor/) (stream) - _(all formats)_
 
+* [Motorola 6803](https://github.com/dougmasten/zx0-6803) _("classic" file format v1)_
+
 * [Motorola 6809](https://github.com/dougmasten/zx0-6x09) _("classic" file format v1)_
 
 * [Motorola 68000](https://github.com/emmanuel-marty/unzx0_68000) _(all formats)_
