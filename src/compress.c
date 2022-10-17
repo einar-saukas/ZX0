@@ -78,7 +78,7 @@ void write_interlaced_elias_gamma(int value, int backwards_mode, int invert_mode
     write_bit(!backwards_mode);
 }
 
-unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_size, int skip, int backwards_mode, int invert_mode, int *output_size, int *delta) {
+unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_size, int skip, int backwards_mode, int invert_mode, int max_elias_code, int *output_size, int *delta) {
     BLOCK *prev;
     BLOCK *next;
     int last_offset = INITIAL_OFFSET;
@@ -148,7 +148,11 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
 
             /* copy from new offset length */
             backtrack = TRUE;
-            write_interlaced_elias_gamma(length-1, backwards_mode, FALSE);
+            if (length > 1)
+                write_interlaced_elias_gamma(length-1, backwards_mode, FALSE);
+            else
+                write_interlaced_elias_gamma(max_elias_code, backwards_mode, FALSE);
+
             read_bytes(length, delta);
 
             last_offset = optimal->offset;
