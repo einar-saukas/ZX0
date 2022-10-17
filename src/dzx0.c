@@ -95,7 +95,7 @@ void write_bytes(int offset, int length) {
     }
 }
 
-void decompress(int classic_mode) {
+void decompress(int classic_mode, int limit_match_length) {
     int last_offset = INITIAL_OFFSET;
     int length;
     int i;
@@ -116,14 +116,14 @@ void decompress(int classic_mode) {
     backtrack = FALSE;
 
 COPY_LITERALS:
-    length = read_interlaced_elias_gamma(FALSE);
+    length = read_interlaced_elias_gamma(FALSE)&limit_match_length;
     for (i = 0; i < length; i++)
         write_byte(read_byte());
     if (read_bit())
         goto COPY_FROM_NEW_OFFSET;
 
 /*COPY_FROM_LAST_OFFSET:*/
-    length = read_interlaced_elias_gamma(FALSE);
+    length = read_interlaced_elias_gamma(FALSE)&limit_match_length;
     write_bytes(last_offset, length);
     if (!read_bit())
         goto COPY_LITERALS;
@@ -140,7 +140,7 @@ COPY_FROM_NEW_OFFSET:
     }
     last_offset = last_offset*128-(read_byte()>>1);
     backtrack = TRUE;
-    length = read_interlaced_elias_gamma(FALSE)+1;
+    length = (read_interlaced_elias_gamma(FALSE)&limit_match_length)+1;
     write_bytes(last_offset, length);
     if (read_bit())
         goto COPY_FROM_NEW_OFFSET;
@@ -151,6 +151,7 @@ COPY_FROM_NEW_OFFSET:
 int main(int argc, char *argv[]) {
     int forced_mode = FALSE;
     int classic_mode = FALSE;
+    int limit_match_length = 0xFFFFFFFF;
     int i;
 
     printf("DZX0 v2.2: Data decompressor by Einar Saukas\n");
@@ -161,6 +162,8 @@ int main(int argc, char *argv[]) {
             forced_mode = TRUE;
         } else if (!strcmp(argv[i], "-c")) {
             classic_mode = TRUE;
+        } else if (!strcmp(argv[i], "-l")) {
+            limit_match_length = 0xFFFF;
         } else {
             fprintf(stderr, "Error: Invalid parameter %s\n", argv[i]);
             exit(1);
@@ -186,6 +189,7 @@ int main(int argc, char *argv[]) {
     } else {
         fprintf(stderr, "Usage: %s [-f] [-c] input.zx0 [output]\n"
                         "  -f      Force overwrite of output file\n"
+                        "  -l      Limit match lengths to 16 bits\n"
                         "  -c      Classic file format (v1.*)\n", argv[0]);
         exit(1);
     }
@@ -211,7 +215,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* generate output file */
-    decompress(classic_mode);
+    decompress(classic_mode, limit_match_length);
 
     /* close input file */
     fclose(ifp);

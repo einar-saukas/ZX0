@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
     int quick_mode = FALSE;
     int backwards_mode = FALSE;
     int classic_mode = FALSE;
+    int max_elias_code = 0;
     char *output_name;
     unsigned char *input_data;
     unsigned char *output_data;
@@ -70,6 +71,8 @@ int main(int argc, char *argv[]) {
             classic_mode = TRUE;
         } else if (!strcmp(argv[i], "-b")) {
             backwards_mode = TRUE;
+        } else if (!strcmp(argv[i], "-l")) {
+            max_elias_code = 0x10000;
         } else if (!strcmp(argv[i], "-q")) {
             quick_mode = TRUE;
         } else if ((skip = atoi(argv[i])) <= 0) {
@@ -89,6 +92,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Usage: %s [-f] [-c] [-b] [-q] input [output.zx0]\n"
                         "  -f      Force overwrite of output file\n"
                         "  -c      Classic file format (v1.*)\n"
+                        "  -l      Encode length-1 matches as maximum length\n"
                         "  -b      Compress backwards\n"
                         "  -q      Quick non-optimal compression\n", argv[0]);
         exit(1);
@@ -155,7 +159,7 @@ int main(int argc, char *argv[]) {
         reverse(input_data, input_data+input_size-1);
 
     /* generate output file */
-    output_data = compress(optimize(input_data, input_size, skip, quick_mode ? MAX_OFFSET_ZX7 : MAX_OFFSET_ZX0), input_data, input_size, skip, backwards_mode, !classic_mode && !backwards_mode, &output_size, &delta);
+    output_data = compress(optimize(input_data, input_size, skip, quick_mode ? MAX_OFFSET_ZX7 : MAX_OFFSET_ZX0, max_elias_code), input_data, input_size, skip, backwards_mode, !classic_mode && !backwards_mode, max_elias_code, &output_size, &delta);
 
     /* conditionally reverse output file */
     if (backwards_mode)
