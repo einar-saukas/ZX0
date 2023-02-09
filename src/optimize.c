@@ -34,11 +34,25 @@ int offset_ceiling(int index, int offset_limit) {
     return index > offset_limit ? offset_limit : index < INITIAL_OFFSET ? INITIAL_OFFSET : index;
 }
 
-int elias_gamma_bits(int value) {
+int elias_gamma_bits_no_lut(int value) {
     int bits = 1;
     while (value >>= 1)
         bits += 2;
     return bits;
+}
+
+int8_t elias_gamma_bits_table[32768];
+
+int elias_gamma_bits(int value) {
+    if(value >= 0 && value < sizeof(elias_gamma_bits_table))
+        return elias_gamma_bits_table[value];
+
+    return elias_gamma_bits_no_lut(value);
+}
+
+void precalc_elias_gamma_bits() {
+    for(int i = 0; i < sizeof(elias_gamma_bits_table); i++)
+        elias_gamma_bits_table[i] = elias_gamma_bits_no_lut(i);
 }
 
 BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_limit) {
@@ -55,6 +69,9 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
     int bits2;
     int dots = 2;
     int max_offset = offset_ceiling(input_size-1, offset_limit);
+
+    /* precalculate elias gamma bits */
+    precalc_elias_gamma_bits();
 
     /* allocate all main data structures at once */
     last_literal = (BLOCK **)calloc(max_offset+1, sizeof(BLOCK *));
