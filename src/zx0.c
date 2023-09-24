@@ -29,6 +29,7 @@
 
 #include "zx0.h"
 
+#define MIN_OFFSET_ZX0       16
 #define MAX_OFFSET_ZX0    32640
 #define MAX_OFFSET_ZX7     2176
 
@@ -46,6 +47,8 @@ int main(int argc, char *argv[]) {
     int skip = 0;
     int forced_mode = FALSE;
     int quick_mode = FALSE;
+    int max_offset_mode = FALSE;
+    int max_offset_value = 0;
     int backwards_mode = FALSE;
     int classic_mode = FALSE;
     char *output_name;
@@ -72,6 +75,13 @@ int main(int argc, char *argv[]) {
             backwards_mode = TRUE;
         } else if (!strcmp(argv[i], "-q")) {
             quick_mode = TRUE;
+        } else if (!strncmp(argv[i], "-mo", 3)) {
+            max_offset_mode = TRUE;
+            max_offset_value = atoi(argv[i]+3);
+            if ((max_offset_value<MIN_OFFSET_ZX0)||(max_offset_value>MAX_OFFSET_ZX0)) {
+                fprintf(stderr, "Error: max_offset_value (%i) out of range. Should be between %i and %i (included)\n",max_offset_value,MIN_OFFSET_ZX0,MAX_OFFSET_ZX0);
+                exit(1);
+            }
         } else if ((skip = atoi(argv[i])) <= 0) {
             fprintf(stderr, "Error: Invalid parameter %s\n", argv[i]);
             exit(1);
@@ -87,12 +97,17 @@ int main(int argc, char *argv[]) {
         output_name = argv[i+1];
     } else {
         fprintf(stderr, "Usage: %s [-f] [-c] [-b] [-q] input [output.zx0]\n"
-                        "  -f      Force overwrite of output file\n"
-                        "  -c      Classic file format (v1.*)\n"
-                        "  -b      Compress backwards\n"
-                        "  -q      Quick non-optimal compression\n", argv[0]);
+                        "  -f         Force overwrite of output file\n"
+                        "  -c         Classic file format (v1.*)\n"
+                        "  -b         Compress backwards\n"
+                        "  -q         Quick non-optimal compression\n"
+                        "  -mo[bytes] Max Offset for cyclic buffer compression\n"
+                        "             with [bytes] between %i and %i (included)\n"
+                        "             Superseeds the '-q' parameter\n", argv[0],MIN_OFFSET_ZX0,MAX_OFFSET_ZX0);
         exit(1);
     }
+
+    max_offset_value=(max_offset_mode?max_offset_value:(quick_mode ? MAX_OFFSET_ZX7 : MAX_OFFSET_ZX0));
 
     /* open input file */
     ifp = fopen(argv[i], "rb");
@@ -155,7 +170,7 @@ int main(int argc, char *argv[]) {
         reverse(input_data, input_data+input_size-1);
 
     /* generate output file */
-    output_data = compress(optimize(input_data, input_size, skip, quick_mode ? MAX_OFFSET_ZX7 : MAX_OFFSET_ZX0), input_data, input_size, skip, backwards_mode, !classic_mode && !backwards_mode, &output_size, &delta);
+    output_data = compress(optimize(input_data, input_size, skip, max_offset_value), input_data, input_size, skip, backwards_mode, !classic_mode && !backwards_mode, &output_size, &delta);
 
     /* conditionally reverse output file */
     if (backwards_mode)
